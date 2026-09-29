@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hangout · Find people who play what you play</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/carousel.js" defer></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a href="index.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+        <a href="auth.html" class="nav-link">Log in</a>
+        <a href="auth.html#signup" class="btn btn--primary btn--sm">Sign up</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <section class="hero__text">
+        <p class="terminal-line">&gt; player_search.exe</p>
+        <h1 class="hero__title">Find people who play what you play.</h1>
+        <p class="hero__lead">Connect your Steam library and we match you with players who share your games, your hours and your region.</p>
+        <div class="hero__actions">
+          <a href="auth.html#signup" class="btn btn--primary">Sign up free</a>
+          <a href="#how-it-works" class="btn btn--secondary">How it works</a>
+        </div>
+      </section>
+
+      <section class="carousel" aria-roledescription="carousel" aria-label="About Hangout">
+        <div class="carousel__viewport">
+
+          <!-- Slide 1: pixel-art scene -->
+          <div class="slide is-active" data-duration="3000" role="group" aria-roledescription="slide" aria-label="1 of 3">
+            <svg class="scene" viewBox="0 0 120 76" role="img" aria-labelledby="scene-title">
+              <title id="scene-title">A retro TV playing a pixel game, with a controller and floating game cartridges</title>
+
+              <!-- sparkles -->
+              <rect class="px-ink blink" x="6" y="8" width="2" height="2"/>
+              <rect class="px-ink blink blink--late" x="10" y="44" width="2" height="2"/>
+              <rect class="px-ink blink" x="80" y="6" width="2" height="2"/>
+              <rect class="px-ink blink blink--late" x="116" y="48" width="2" height="2"/>
+
+              <!-- TV -->
+              <rect class="px-ink" x="16" y="16" width="60" height="46"/>
+              <rect class="px-white" x="18" y="18" width="56" height="42"/>
+              <rect class="px-ink" x="22" y="22" width="48" height="30"/>
+              <rect class="px-accent" x="24" y="24" width="44" height="26"/>
+              <rect class="px-yellow" x="56" y="27" width="6" height="6"/>
+              <rect class="px-cream" x="24" y="44" width="44" height="6"/>
+              <rect class="px-ink" x="32" y="35" width="4" height="9"/>
+              <rect class="px-yellow blink" x="42" y="38" width="2" height="2"/>
+              <rect class="px-yellow blink blink--late" x="48" y="38" width="2" height="2"/>
+              <rect class="px-ink" x="62" y="55" width="3" height="3"/>
+              <rect class="px-ink" x="67" y="55" width="3" height="3"/>
+              <rect class="px-ink" x="38" y="62" width="16" height="5"/>
+              <rect class="px-ink" x="30" y="67" width="32" height="4"/>
+
+              <!-- floor -->
+              <rect class="px-ink" x="0" y="71" width="120" height="2"/>
+
+              <!-- controller -->
+              <rect class="px-ink" x="84" y="57" width="32" height="14"/>
+              <rect class="px-white" x="86" y="59" width="28" height="10"/>
+              <rect class="px-ink" x="89" y="63" width="6" height="2"/>
+              <rect class="px-ink" x="91" y="61" width="2" height="6"/>
+              <rect class="px-accent" x="104" y="61" width="3" height="3"/>
+              <rect class="px-yellow" x="108" y="64" width="3" height="3"/>
+
+              <!-- floating cartridges -->
+              <g class="float">
+                <rect class="px-ink" x="86" y="12" width="14" height="18"/>
+                <rect class="px-yellow" x="88" y="15" width="10" height="7"/>
+              </g>
+              <g class="float float--late">
+                <rect class="px-ink" x="102" y="28" width="12" height="15"/>
+                <rect class="px-accent" x="104" y="31" width="8" height="5"/>
+              </g>
+            </svg>
+            <p class="slide__caption"><span class="blink">▶</span> PRESS START</p>
+          </div>
+
+          <!-- Slide 2: profile preview -->
+          <div class="slide" data-duration="3000" role="group" aria-roledescription="slide" aria-label="2 of 3">
+            <p class="slide__label">&gt; your_card.preview</p>
+            <div class="preview__head">
+              <div class="avatar avatar--empty" aria-hidden="true">?</div>
+              <div class="preview__who">
+                <span class="preview__name">YOUR_NAME</span>
+                <span class="preview__meta">LV 1 · Region not set</span>
+              </div>
+            </div>
+            <ul class="game-list">
+              <li class="game">
+                <div class="game__row"><span>Your #1 game</span><span>??h</span></div>
+                <div class="bar"></div>
+              </li>
+              <li class="game">
+                <div class="game__row"><span>Your #2 game</span><span>??h</span></div>
+                <div class="bar"></div>
+              </li>
+              <li class="game">
+                <div class="game__row"><span>Your #3 game</span><span>??h</span></div>
+                <div class="bar"></div>
+              </li>
+            </ul>
+            <a href="auth.html#signup" class="btn btn--primary btn--block">Create your card</a>
+          </div>
+
+          <!-- Slide 3: quote -->
+          <div class="slide slide--quote" data-duration="6500" role="group" aria-roledescription="slide" aria-label="3 of 3">
+            <figure class="dialogue">
+              <figcaption class="dialogue__speaker">HANGOUT</figcaption>
+              <blockquote class="dialogue__text">
+                <p>
+                  <span class="visually-hidden">For those who believe games are a way of life.</span>
+                  <span class="typewriter" aria-hidden="true">For those who believe games are a way of life.</span><span class="cursor" aria-hidden="true"></span>
+                </p>
+              </blockquote>
+              <span class="dialogue__next" aria-hidden="true">▼</span>
+            </figure>
+          </div>
+
+        </div>
+
+        <div class="carousel__controls">
+          <button type="button" class="btn btn--secondary carousel__arrow" data-dir="prev" aria-label="Previous slide">
+            <svg class="icon" viewBox="0 0 8 8" aria-hidden="true"><path d="M5 0h1v8h-1v-1h-1v-1h-1v-1h-1v-2h1v-1h1v-1h1z"/></svg>
+          </button>
+          <span class="carousel__counter" aria-hidden="true">01 / 03</span>
+          <button type="button" class="btn btn--secondary carousel__arrow" data-dir="next" aria-label="Next slide">
+            <svg class="icon icon--flip" viewBox="0 0 8 8" aria-hidden="true"><path d="M5 0h1v8h-1v-1h-1v-1h-1v-1h-1v-2h1v-1h1v-1h1z"/></svg>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- The border-bottom of this section is the "ground" line -->
+    <section class="steps" id="how-it-works">
+      <h2 class="visually-hidden">How it works</h2>
+      <ol class="steps__list">
+        <li class="step"><strong class="step__num">[1]</strong><span>Create your profile</span></li>
+        <li class="step"><strong class="step__num">[2]</strong><span>Connect your Steam library</span></li>
+        <li class="step"><strong class="step__num">[3]</strong><span>Meet players like you</span></li>
+      </ol>
+    </section>
+
+  </div>
+</body>
+</html>

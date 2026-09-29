@@ -1,0 +1,297 @@
+/* ===== Layout ===== */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.settings__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings__title {
+  font-weight: 900;
+  font-size: 40px;
+  letter-spacing: -0.02em;
+}
+
+.settings__layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.settings__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ===== Side menu ===== */
+.settings-nav {
+  position: sticky; /* stays in view while you scroll */
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: var(--border);
+}
+
+.settings-nav a {
+  padding: 12px 16px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-decoration: none;
+}
+.settings-nav a + a { border-top: var(--border); }
+.settings-nav a:hover { background: var(--yellow); color: var(--ink); }
+.settings-nav a.settings-nav__danger { color: var(--danger); }
+
+/* ===== Panels ===== */
+.panel {
+  scroll-margin-top: 24px; /* so a jumped-to panel isn't glued to the top edge */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.panel__title {
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.panel__subtitle {
+  padding-top: 18px;
+  border-top: var(--border);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.panel__text {
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.panel__form {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.panel__status {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.panel__status:empty { display: none; }
+
+.panel--danger {
+  border-color: var(--danger);
+  box-shadow: 4px 4px 0 var(--danger);
+}
+.panel--danger .panel__title { color: var(--danger); }
+
+.btn--danger {
+  background: var(--danger);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+.btn--danger:hover { color: #FFFFFF; }
+
+/* ===== Fields ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.field__input {
+  height: 44px;
+  padding: 0 12px;
+  border: var(--border);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px var(--font-display);
+}
+.field__input:focus {
+  outline: none;
+  background: var(--surface);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+.field__input[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 3px 3px 0 var(--danger);
+}
+
+.field__hint {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.field__hint:empty { display: none; }
+
+.field__error {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--danger);
+}
+.field__error:empty { display: none; }
+
+/* ===== Pixel toggle switch (a real checkbox underneath) ===== */
+.toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.toggle__input {
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 28px;
+  margin: 0;
+  border: var(--border);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+/* The square knob */
+.toggle__input::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--ink);
+  transition: transform 120ms steps(3);
+}
+
+.toggle__input:checked { background: var(--yellow); }
+.toggle__input:checked::before { transform: translateX(24px); }
+
+.toggle__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 15px;
+}
+.toggle__text span {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ===== Radio choices ===== */
+.choices {
+  margin: 0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: var(--border);
+}
+
+.choices legend {
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.choice input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+/* ===== Steam account ===== */
+.steam-account {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: var(--border);
+  background: var(--bg);
+}
+
+.steam-account__badge {
+  padding: 6px 8px;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.steam-account__who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 15px;
+}
+.steam-account__who span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== Smaller screens ===== */
+@media (max-width: 860px) {
+  .settings__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  /* Side menu becomes a scrollable row of tabs */
+  .settings-nav {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .settings-nav a { flex-shrink: 0; }
+  .settings-nav a + a {
+    border-top: none;
+    border-left: var(--border);
+  }
+}
+
+@media (max-width: 640px) {
+  .settings__title { font-size: 30px; }
+  .panel { padding: 18px; }
+}

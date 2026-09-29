@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile · Hangout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <!-- defer keeps the order: mockData.js runs before profile.js -->
+  <script src="js/mockData.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/profile.js" defer></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a href="index.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+      <a href="home.html" class="nav-link">Home</a>
+        <a href="profile.html" class="nav-avatar" id="nav-avatar" aria-label="Your profile"></a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ===== Profile ===== -->
+      <div class="profile" id="profile-view">
+
+        <section class="profile-head">
+          <div class="profile-banner">
+            <span class="profile-banner__tag">&gt; player_profile</span>
+          </div>
+
+          <div class="profile-head__row">
+            <div class="profile-avatar" id="profile-avatar"></div>
+
+            <div class="profile-head__who">
+              <h1 class="profile-name" id="profile-name"></h1>
+              <p class="profile-meta" id="profile-meta"></p>
+              <p class="profile-bio" id="profile-bio"></p>
+            </div>
+
+            <!-- Shown on YOUR profile -->
+            <div class="profile-actions" id="own-actions" hidden>
+              <button type="button" class="btn btn--secondary btn--sm" id="edit-btn">Edit profile</button>
+              <button type="button" class="btn btn--secondary btn--sm" id="share-btn">Share</button>
+            </div>
+
+            <!-- Shown on SOMEONE ELSE'S profile -->
+            <div class="profile-actions" id="visitor-actions" hidden>
+              <button type="button" class="btn btn--primary btn--sm" id="add-friend-btn">Add friend</button>
+              <button type="button" class="btn btn--secondary btn--sm" id="message-btn">Message</button>
+            </div>
+          </div>
+
+          <p class="profile-status" id="profile-status" role="status"></p>
+        </section>
+
+        <dl class="stats">
+          <div class="stat stat--accent"><dt>Level</dt><dd id="stat-level"></dd></div>
+          <div class="stat"><dt>Games</dt><dd id="stat-games"></dd></div>
+          <div class="stat"><dt>Hours</dt><dd id="stat-hours"></dd></div>
+          <div class="stat"><dt>Friends</dt><dd id="stat-friends"></dd></div>
+        </dl>
+
+        <section class="tabs">
+          <div class="tabs__list" role="tablist" aria-label="Profile sections">
+            <button type="button" class="tab" role="tab" id="tab-games" aria-controls="panel-games" aria-selected="true">Games</button>
+            <button type="button" class="tab" role="tab" id="tab-screenshots" aria-controls="panel-screenshots" aria-selected="false" tabindex="-1">Screenshots</button>
+            <button type="button" class="tab" role="tab" id="tab-friends" aria-controls="panel-friends" aria-selected="false" tabindex="-1">Friends</button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-games" aria-labelledby="tab-games">
+            <ul class="game-grid" id="game-grid"></ul>
+            <p class="empty-state" id="games-empty" hidden></p>
+            <button type="button" class="show-all" id="show-all" hidden></button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-screenshots" aria-labelledby="tab-screenshots" hidden>
+            <ul class="shot-grid" id="shot-grid"></ul>
+            <p class="empty-state" id="shots-empty" hidden></p>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-friends" aria-labelledby="tab-friends" hidden>
+            <ul class="friend-grid" id="friend-grid"></ul>
+            <p class="empty-state" id="friends-empty" hidden></p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== Shown when ?user= doesn't match anyone ===== -->
+      <div class="not-found" id="not-found" hidden>
+        <p class="not-found__code">&gt; error 404</p>
+        <h1 class="not-found__title">Player not found</h1>
+        <p class="not-found__text">No one called "<span id="not-found-name"></span>" plays here yet.</p>
+        <a href="profile.html" class="btn btn--primary">Back to your profile</a>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ===== Templates: JS copies these, fills them in and adds them to the page ===== -->
+  <template id="game-card-template">
+    <li class="game-card">
+      <div class="game-card__top">
+        <span class="game-card__rank"></span>
+        <span class="game-card__genre"></span>
+      </div>
+      <h3 class="game-card__name"></h3>
+      <p class="game-card__hours"></p>
+      <div class="bar bar--segmented"><div class="bar__fill"></div></div>
+    </li>
+  </template>
+
+  <template id="friend-card-template">
+    <li>
+      <a class="friend-card" href="#">
+        <span class="friend-card__avatar"></span>
+        <span class="friend-card__who">
+          <span class="friend-card__name"></span>
+          <span class="friend-card__meta"></span>
+        </span>
+      </a>
+    </li>
+  </template>
+</body>
+</html>

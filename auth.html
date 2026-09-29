@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in · Hangout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <script src="js/auth.js" defer></script>
+</head>
+<body>
+  <div class="page auth-page">
+
+    <header class="site-header">
+      <a href="index.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+        <a href="index.html" class="nav-link">← Back to home</a>
+      </nav>
+    </header>
+
+    <main class="auth-main">
+      <h1 class="visually-hidden">Log in or create a Hangout account</h1>
+
+      <!-- is-loading stops the slide animation from playing when the page first opens -->
+      <div class="auth is-loading" id="auth">
+
+        <!-- ===== Sign up ===== -->
+        <div class="auth__form-wrap auth__form-wrap--signup" id="signup-wrap" inert>
+          <form class="auth-form" id="signup-form" novalidate>
+            <p class="auth-form__label">&gt; new_player.exe</p>
+            <h2 class="auth-form__title">Create account</h2>
+
+            <div class="social">
+              <button type="button" class="btn btn--social" data-message="Steam sign-in will work once the backend is connected.">
+                <i class="fab fa-steam" aria-hidden="true"></i>Steam
+              </button>
+              <button type="button" class="btn btn--social" data-message="Discord sign-in will work once the backend is connected.">
+                <i class="fab fa-discord" aria-hidden="true"></i>Discord
+              </button>
+            </div>
+
+            <p class="auth-divider">or use your email</p>
+
+            <div class="field">
+              <label class="field__label" for="su-username">Username</label>
+              <input class="field__input" id="su-username" name="username" type="text"
+                     autocomplete="username" data-rule="username" aria-describedby="su-username-error">
+              <p class="field__error" id="su-username-error"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="su-email">Email</label>
+              <input class="field__input" id="su-email" name="email" type="email"
+                     autocomplete="email" data-rule="email" aria-describedby="su-email-error">
+              <p class="field__error" id="su-email-error"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="su-password">Password</label>
+              <input class="field__input" id="su-password" name="password" type="password"
+                     autocomplete="new-password" data-rule="newPassword" aria-describedby="su-password-error">
+              <p class="field__error" id="su-password-error"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="su-confirm">Confirm password</label>
+              <input class="field__input" id="su-confirm" name="confirm" type="password"
+                     autocomplete="new-password" data-rule="confirmPassword" aria-describedby="su-confirm-error">
+              <p class="field__error" id="su-confirm-error"></p>
+            </div>
+
+            <p class="form-status" role="status"></p>
+            <button type="submit" class="btn btn--primary btn--block">Sign up</button>
+
+            <!-- Only shown on phones, where the sliding panel is hidden -->
+            <p class="auth-switch">Already have an account?
+              <button type="button" class="link-btn" data-show="signin">Sign in</button>
+            </p>
+          </form>
+        </div>
+
+        <!-- ===== Sign in ===== -->
+        <div class="auth__form-wrap auth__form-wrap--signin" id="signin-wrap">
+          <form class="auth-form" id="signin-form" novalidate>
+            <p class="auth-form__label">&gt; continue.exe</p>
+            <h2 class="auth-form__title">Sign in</h2>
+
+            <div class="social">
+              <button type="button" class="btn btn--social" data-message="Steam sign-in will work once the backend is connected.">
+                <i class="fab fa-steam" aria-hidden="true"></i>Steam
+              </button>
+              <button type="button" class="btn btn--social" data-message="Discord sign-in will work once the backend is connected.">
+                <i class="fab fa-discord" aria-hidden="true"></i>Discord
+              </button>
+            </div>
+
+            <p class="auth-divider">or use your email</p>
+
+            <div class="field">
+              <label class="field__label" for="si-email">Email</label>
+              <input class="field__input" id="si-email" name="email" type="email"
+                     autocomplete="email" data-rule="email" aria-describedby="si-email-error">
+              <p class="field__error" id="si-email-error"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="si-password">Password</label>
+              <input class="field__input" id="si-password" name="password" type="password"
+                     autocomplete="current-password" data-rule="password" aria-describedby="si-password-error">
+              <p class="field__error" id="si-password-error"></p>
+            </div>
+
+            <div class="auth-form__row">
+              <button type="button" class="link-btn" data-message="Password reset will work once the backend is connected.">Forgot your password?</button>
+            </div>
+
+            <p class="form-status" role="status"></p>
+            <button type="submit" class="btn btn--primary btn--block">Sign in</button>
+
+            <p class="auth-switch">No account yet?
+              <button type="button" class="link-btn" data-show="signup">Sign up</button>
+            </p>
+          </form>
+        </div>
+
+        <!-- ===== Sliding blue panel ===== -->
+        <div class="auth__toggle-wrap">
+          <div class="auth__toggle">
+            <!-- Shown next to the SIGN UP form -->
+            <div class="toggle-panel toggle-panel--left" id="panel-left" inert>
+              <p class="toggle-panel__label">&gt; returning_player</p>
+              <p class="toggle-panel__title">Welcome back<span class="blink">!</span></p>
+              <p class="toggle-panel__text">Already have an account? Sign in and pick up where you left off.</p>
+              <button type="button" class="btn btn--ghost" data-show="signin">Sign in</button>
+            </div>
+
+            <!-- Shown next to the SIGN IN form -->
+            <div class="toggle-panel toggle-panel--right" id="panel-right">
+              <p class="toggle-panel__label">&gt; new_player</p>
+              <p class="toggle-panel__title">Hello, player<span class="blink">!</span></p>
+              <p class="toggle-panel__text">New here? Create an account and find people who play what you play.</p>
+              <button type="button" class="btn btn--ghost" data-show="signup">Sign up</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

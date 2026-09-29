@@ -1,0 +1,73 @@
+/* ===== Design tokens: change the look here, nowhere else ===== */
+:root {
+  --bg: #F3EEE4;          /* cream page */
+  --surface: #FFFFFF;     /* cards, boxes */
+  --ink: #151515;         /* text, borders, shadows */
+  --muted: #55514A;       /* secondary text */
+  --accent: #2E47F5;      /* blue buttons, bars */
+  --accent-hover: #1A2FC4;
+  --yellow: #FFD84D;      /* highlights */
+  --danger:#C2261B;
+
+  --font-display: "Archivo", sans-serif;
+  --font-mono: "Space Mono", monospace;
+
+  --border: 2px solid var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow-md: 4px 4px 0 var(--ink);
+  --shadow-lg: 8px 8px 0 var(--ink);
+
+  --page-max: 1280px;
+  --page-pad: 72px;
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, figure, blockquote { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+a { color: var(--accent); }
+a:hover { color: var(--accent-hover); }
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Hidden visually but still read by screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Shared retro blink, used by several components */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Turn off animation for people who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* The hidden attribute must win over display: flex / grid below.
+   (You can move this line into base.css so every page gets it.) */
+[hidden] { display: none !important; }

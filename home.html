@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home · Hangout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/home.js" defer></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a href="home.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+        <a href="home.html" class="nav-link nav-link--active" aria-current="page">Home</a>
+        <div class="account">
+          <button type="button" class="account__button" id="account-button"
+                  aria-expanded="false" aria-controls="account-menu" aria-label="Account menu">
+            <span class="nav-avatar" id="nav-avatar"></span>
+            <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="account__menu" id="account-menu" hidden>
+            <li><a href="profile.html">Your profile</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li><a href="index.html">Log out</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="home">
+      <div class="home__intro">
+        <p class="terminal-line" id="match-count"></p>
+        <h1 class="home__title" id="welcome"></h1>
+      </div>
+
+      <!-- Friend requests: a bar that opens into a list -->
+      <section class="requests" id="requests" aria-label="Friend requests" hidden>
+        <div class="requests__bar">
+          <p class="requests__summary" id="requests-summary"></p>
+          <button type="button" class="requests__toggle" id="requests-toggle"
+                  aria-expanded="false" aria-controls="requests-list">Review</button>
+        </div>
+        <ul class="requests__list" id="requests-list" hidden></ul>
+      </section>
+
+      <p class="home-status" id="home-status" role="status"></p>
+
+      <div class="home__top">
+        <!-- Friends online (friends only, never strangers) -->
+        <section class="card card--big" aria-labelledby="online-title">
+          <span class="card__tag">LIVE FROM STEAM</span>
+          <div class="card__head">
+            <h2 class="card__title" id="online-title">Friends online</h2>
+            <span class="card__meta" id="online-count"></span>
+          </div>
+          <ul class="online-list" id="online-list"></ul>
+          <p class="empty-state" id="online-empty" hidden>None of your friends are online right now.</p>
+          <p class="card__note">Only friends see each other's status. Offline friends are hidden.</p>
+        </section>
+
+        <div class="home__side">
+          <section class="card" aria-labelledby="add-title">
+            <h2 class="card__title card__title--sm" id="add-title">Add friend</h2>
+            <form class="add-friend" id="add-friend-form" novalidate>
+              <label class="add-friend__label" for="add-username">Username</label>
+              <div class="add-friend__row">
+                <input class="add-friend__input" id="add-username" name="username" type="text"
+                       autocomplete="off" spellcheck="false" aria-describedby="add-username-msg">
+                <button type="submit" class="btn btn--primary btn--sm">Send</button>
+              </div>
+              <p class="add-friend__msg" id="add-username-msg"></p>
+            </form>
+          </section>
+
+          <div class="upload">
+            <input type="file" id="shot-input" class="visually-hidden" accept="image/png, image/jpeg, image/webp">
+            <label for="shot-input" class="upload__button">+ Upload screenshot</label>
+          </div>
+
+          <div class="steam-sync">
+            <span>Steam · synced 2h ago</span>
+            <button type="button" class="text-btn" id="sync-btn">Sync now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <section class="recs" aria-labelledby="recs-title">
+        <div class="recs__head">
+          <h2 class="recs__title" id="recs-title">Recommended for you</h2>
+          <div class="chips" role="group" aria-label="Filter recommendations">
+            <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="chip" data-filter="FPS" aria-pressed="false">FPS</button>
+            <button type="button" class="chip" data-filter="Soulslike" aria-pressed="false">Soulslike</button>
+            <button type="button" class="chip" data-filter="Cozy" aria-pressed="false">Cozy</button>
+            <button type="button" class="chip" data-filter="region" aria-pressed="false">My region</button>
+          </div>
+        </div>
+        <ul class="recs__list" id="recs-list"></ul>
+        <p class="empty-state" id="recs-empty" hidden></p>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- ===== Templates ===== -->
+  <template id="request-template">
+    <li class="request">
+      <a class="request__who" href="#">
+        <span class="mini-avatar request__avatar"></span>
+        <span class="request__name"></span>
+      </a>
+      <button type="button" class="request__btn request__btn--accept" data-action="accept">✓</button>
+      <button type="button" class="request__btn" data-action="decline">✕</button>
+    </li>
+  </template>
+
+  <template id="online-row-template">
+    <li class="online-row">
+      <a class="online-row__link" href="#">
+        <span class="online-row__avatar-wrap">
+          <span class="mini-avatar online-row__avatar"></span>
+          <span class="online-row__dot" aria-hidden="true"></span>
+        </span>
+        <span class="online-row__who">
+          <strong class="online-row__name"></strong>
+          <span class="online-row__status"></span>
+        </span>
+      </a>
+      <button type="button" class="online-row__ping">Ping</button>
+    </li>
+  </template>
+
+  <template id="rec-template">
+    <li class="rec">
+      <span class="mini-avatar rec__avatar"></span>
+      <div class="rec__who">
+        <span class="rec__badge" hidden>★ TOP MATCH</span>
+        <a class="rec__name" href="#"></a>
+        <span class="rec__region"></span>
+      </div>
+      <p class="rec__reason"></p>
+      <button type="button" class="rec__dismiss">✕</button>
+      <button type="button" class="btn btn--primary btn--sm rec__add">Add</button>
+    </li>
+  </template>
+</body>
+</html>

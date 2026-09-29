@@ -1,0 +1,303 @@
+/* Only the auth page needs a "danger" colour for now */
+:root {
+  --danger: #C2261B;
+}
+
+/* ===== Page ===== */
+.auth-page {
+  min-height: 100vh;
+}
+
+.auth-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== The box ===== */
+.auth {
+  --slide: 480ms steps(8); /* chunky retro slide */
+  position: relative;
+  width: 880px;
+  max-width: 100%;
+  min-height: 680px;
+  overflow: hidden;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* No sliding while the page first loads (e.g. opening auth.html#signup) */
+.auth.is-loading,
+.auth.is-loading * {
+  transition: none !important;
+}
+
+/* ===== The two forms (both sit on the left half) ===== */
+.auth__form-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: var(--surface);
+  transition: transform var(--slide), opacity var(--slide);
+}
+
+.auth__form-wrap--signin { z-index: 2; }
+.auth.is-signup .auth__form-wrap--signin { transform: translateX(100%); }
+
+.auth__form-wrap--signup { z-index: 1; opacity: 0; }
+.auth.is-signup .auth__form-wrap--signup {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: auth-swap 480ms steps(8);
+}
+
+/* Sign-up form stays hidden until it's halfway across, then pops on top */
+@keyframes auth-swap {
+  0%, 49.99% { opacity: 0; z-index: 1; }
+  50%, 100%  { opacity: 1; z-index: 5; }
+}
+
+/* ===== Form contents ===== */
+.auth-form {
+  height: 100%;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.auth-form__label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.auth-form__title {
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.auth-form__row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Social buttons */
+.social {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.btn--social {
+  height: 44px;
+  padding: 0 12px;
+  gap: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.btn--social:hover  { transform: translate(1px, 1px); color: var(--ink); }
+.btn--social:active { transform: translate(3px, 3px); }
+.btn--social i { font-size: 18px; }
+
+/* "—— or use your email ——" */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex-grow: 1;
+  height: 2px;
+  background: var(--ink);
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field__label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.field__input {
+  height: 42px;
+  padding: 0 12px;
+  border: var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px var(--font-display);
+}
+
+.field__input:focus {
+  outline: none;
+  background: var(--surface);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 3px 3px 0 var(--danger);
+}
+
+.field__error {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--danger);
+}
+.field__error:empty { display: none; }
+
+/* Info message, e.g. "Steam sign-in will work once..." */
+.form-status {
+  padding: 10px 12px;
+  border: var(--border);
+  background: var(--yellow);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.form-status:empty { display: none; }
+
+/* Button that looks like a link */
+.link-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--accent-hover); }
+
+/* Phone-only "Sign in / Sign up" switch */
+.auth-switch {
+  display: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* ===== Sliding blue panel ===== */
+.auth__toggle-wrap {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 100;
+  border-left: var(--border);
+  border-right: var(--border);
+  transition: transform var(--slide);
+}
+.auth.is-signup .auth__toggle-wrap { transform: translateX(-100%); }
+
+.auth__toggle {
+  position: relative;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background-color: var(--accent);
+  /* faint pixel dot grid */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 12px 12px;
+  color: #FFFFFF;
+  transition: transform var(--slide);
+}
+.auth.is-signup .auth__toggle { transform: translateX(50%); }
+
+.toggle-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  padding: 0 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  transition: transform var(--slide);
+}
+
+.toggle-panel--left { transform: translateX(-200%); }
+.auth.is-signup .toggle-panel--left { transform: none; }
+
+.toggle-panel--right { right: 0; }
+.auth.is-signup .toggle-panel--right { transform: translateX(200%); }
+
+.toggle-panel__label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.toggle-panel__title {
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.toggle-panel__text {
+  max-width: 300px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+  font-weight: 700;
+}
+.btn--ghost:hover { color: #FFFFFF; }
+
+/* ===== Phones: no sliding, just show one form at a time ===== */
+@media (max-width: 760px) {
+  .auth { min-height: 0; }
+
+  .auth__toggle-wrap { display: none; }
+
+  .auth .auth__form-wrap,
+  .auth.is-signup .auth__form-wrap {
+    position: static;
+    width: 100%;
+    height: auto;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .auth .auth__form-wrap--signup,
+  .auth.is-signup .auth__form-wrap--signin { display: none; }
+
+  .auth.is-signup .auth__form-wrap--signup { display: block; }
+
+  .auth-form { padding: 28px 20px; }
+  .auth-form__title { font-size: 30px; }
+  .auth-switch { display: block; }
+}

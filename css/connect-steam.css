@@ -1,0 +1,245 @@
+/* ===== Layout ===== */
+.connect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* ===== Onboarding tracker ===== */
+.setup-steps {
+  max-width: 100%;
+  display: flex;
+  overflow-x: auto;
+  background: var(--surface);
+  border: var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.setup-step {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+.setup-step + .setup-step { border-left: var(--border); }
+
+.setup-step__num {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.setup-step.is-done .setup-step__num {
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+.setup-step.is-current {
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ===== Card ===== */
+.connect-card {
+  width: 640px;
+  max-width: 100%;
+  padding: 36px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.connect-state {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.connect-title {
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+/* Headings get focus from JS when the screen changes (for screen readers),
+   but they don't need a visible focus box */
+.connect-title:focus { outline: none; }
+
+.connect-lead {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.connect-note,
+.demo-note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.demo-note code {
+  padding: 1px 5px;
+  background: var(--surface);
+  border: var(--border);
+}
+
+.connect-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== Steam button ===== */
+.btn--steam {
+  align-self: flex-start;
+  height: 56px;
+  gap: 12px;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 16px;
+}
+.btn--steam:hover { color: #FFFFFF; }
+.btn--steam i { font-size: 22px; }
+
+/* ===== What we read / never see ===== */
+.permissions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.permissions__col {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg);
+  border: var(--border);
+}
+
+.permissions__title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.permissions__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.permissions__list li {
+  display: flex;
+  gap: 8px;
+}
+
+.permissions__list--yes li::before {
+  content: "✓";
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.permissions__list--no li::before {
+  content: "✕";
+  font-weight: 900;
+  color: var(--danger);
+}
+
+/* ===== Pixel loader: blocks light up one after another ===== */
+.loader {
+  display: flex;
+  gap: 6px;
+}
+
+.loader span {
+  width: 22px;
+  height: 22px;
+  border: var(--border);
+  background: var(--bg);
+  animation: loader-blink 1.2s steps(1) infinite;
+}
+
+.loader span:nth-child(2) { animation-delay: 0.15s; }
+.loader span:nth-child(3) { animation-delay: 0.3s; }
+.loader span:nth-child(4) { animation-delay: 0.45s; }
+.loader span:nth-child(5) { animation-delay: 0.6s; }
+.loader span:nth-child(6) { animation-delay: 0.75s; }
+.loader span:nth-child(7) { animation-delay: 0.9s; }
+.loader span:nth-child(8) { animation-delay: 1.05s; }
+
+@keyframes loader-blink {
+  0%   { background: var(--accent); }
+  25%  { background: var(--bg); }
+}
+
+/* ===== Connected summary ===== */
+.summary {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px; /* ink shows through as dividers, like the profile stats */
+  background: var(--ink);
+  border: var(--border);
+}
+
+.summary div {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+}
+
+.summary dt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.summary dd {
+  margin: 0;
+  font-weight: 900;
+  font-size: 22px;
+  overflow-wrap: anywhere;
+}
+
+/* ===== Private-library help ===== */
+.fix-steps {
+  list-style: decimal;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ===== Smaller screens ===== */
+@media (max-width: 640px) {
+  .connect-card { padding: 22px; }
+  .connect-title { font-size: 26px; }
+  .permissions,
+  .summary { grid-template-columns: minmax(0, 1fr); }
+  .setup-step { padding: 8px 10px; font-size: 12px; }
+}

@@ -1,0 +1,477 @@
+
+/* ===== Shared small avatar ===== */
+.mini-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--yellow);
+  border: var(--border);
+  font-weight: 900;
+  font-size: 14px;
+}
+.mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ===== Layout ===== */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home__title {
+  font-weight: 900;
+  font-size: 40px;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.home__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 28px;
+  align-items: start;
+}
+
+.home__side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Feedback line, e.g. "Request sent to kaiju_main." */
+.home-status {
+  padding: 10px 12px;
+  border: var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.home-status:empty { display: none; }
+
+/* ===== Friend requests ===== */
+.requests {
+  border: var(--border);
+  background: var(--yellow);
+}
+
+.requests__bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.requests__summary {
+  flex-grow: 1;
+  font-weight: 700;
+}
+
+.requests__toggle {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.requests__list {
+  border-top: var(--border);
+  background: var(--surface);
+}
+
+.request {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+}
+.request + .request { border-top: var(--border); }
+
+.request__who {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: none;
+}
+.request__who:hover { color: var(--ink); text-decoration: underline; }
+
+.request__btn {
+  width: 40px;
+  height: 40px;
+  border: var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+.request__btn--accept { background: var(--accent); color: #FFFFFF; }
+
+/* ===== Cards ===== */
+.card {
+  position: relative;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.card--big {
+  padding: 28px 24px 22px;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.card__tag {
+  position: absolute;
+  top: -14px;
+  left: 20px;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: #FFFFFF;
+  border: var(--border);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.card__title {
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+}
+.card__title--sm { font-size: 18px; }
+
+.card__meta,
+.card__note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== Friends online ===== */
+.online-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.online-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: var(--border);
+  background: var(--bg);
+}
+
+.online-row__link {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.online-row__link:hover { color: var(--ink); }
+.online-row__link:hover .online-row__name { text-decoration: underline; }
+
+.online-row__avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.online-row__dot {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 12px;
+  height: 12px;
+  border: var(--border);
+  background: var(--surface);
+}
+
+.online-row__who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.online-row__name { font-size: 15px; }
+
+.online-row__status {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.online-row__ping {
+  height: 36px;
+  padding: 0 14px;
+  border: var(--border);
+  background: var(--ink);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+.online-row__ping:hover { background: var(--accent); }
+
+/* Status colours (the text label says the same thing, so colour isn't the only signal) */
+.online-row[data-state="in-game"] .online-row__dot { background: var(--accent); }
+.online-row[data-state="online"] .online-row__dot { background: var(--yellow); }
+
+.online-row[data-state="looking-to-play"] { background: var(--yellow); }
+.online-row[data-state="looking-to-play"] .online-row__dot { background: var(--ink); }
+.online-row[data-state="looking-to-play"] .online-row__status {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ===== Add friend ===== */
+.add-friend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-friend__label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.add-friend__row {
+  display: flex;
+  gap: 8px;
+}
+
+.add-friend__input {
+  flex-grow: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 10px;
+  border: var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px var(--font-display);
+}
+.add-friend__input:focus {
+  outline: none;
+  background: var(--surface);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+.add-friend__input[aria-invalid="true"] { border-color: var(--danger, #C2261B); }
+
+.add-friend__msg {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.add-friend__msg:empty { display: none; }
+.add-friend__msg.is-error { color: var(--danger, #C2261B); }
+
+/* ===== Upload + Steam sync ===== */
+.upload__button {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--ink);
+  background-color: var(--bg);
+  background-image: repeating-linear-gradient(45deg, #E6DFD1 0 2px, transparent 2px 12px);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.upload__button:hover { background-color: var(--surface); }
+
+/* The real file input is hidden, so show its keyboard focus on the label */
+.upload input:focus-visible + .upload__button {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.steam-sync {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border: var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.text-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.text-btn:hover { color: var(--accent-hover); }
+
+/* ===== Recommendations ===== */
+.recs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recs__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.recs__title {
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  height: 36px;
+  padding: 0 12px;
+  border: var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  cursor: pointer;
+}
+.chip:hover { background: var(--bg); }
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.recs__list {
+  border: var(--border);
+  background: var(--surface);
+}
+
+.rec {
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 44px 190px minmax(0, 1fr) 40px 96px;
+  gap: 16px;
+  align-items: center;
+}
+.rec + .rec { border-top: var(--border); }
+
+/* A pale version of the yellow, mixed from the variable itself */
+.rec--top { background: color-mix(in srgb, var(--yellow) 30%, var(--surface)); }
+
+.rec__who {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rec__badge {
+  align-self: flex-start;
+  padding: 1px 6px;
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.rec__name {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.rec__name:hover { color: var(--ink); text-decoration: underline; }
+
+.rec__region {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.rec__reason {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rec__dismiss {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: var(--border);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+.rec__dismiss:hover { background: var(--bg); }
+
+.rec__add { width: 100%; padding: 0; }
+
+/* ===== Smaller screens ===== */
+@media (max-width: 960px) {
+  .home__top { grid-template-columns: minmax(0, 1fr); }
+
+  /* The reason moves to its own line under the name */
+  .rec { grid-template-columns: 44px minmax(0, 1fr) 40px 96px; }
+  .rec__reason { grid-column: 2 / -1; grid-row: 2; }
+}
+
+@media (max-width: 640px) {
+  .home__title { font-size: 30px; }
+  .requests__bar { flex-wrap: wrap; }
+
+  .rec { grid-template-columns: 44px minmax(0, 1fr) 40px; }
+  .rec__add { grid-column: 2 / -1; grid-row: 3; }
+}

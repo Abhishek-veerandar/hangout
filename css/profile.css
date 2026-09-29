@@ -1,0 +1,369 @@
+
+
+
+
+/* ===== Layout ===== */
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ===== Banner + name row ===== */
+.profile-banner {
+  height: 180px;
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--accent);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.profile-banner__tag {
+  padding: 4px 10px;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.profile-head__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 0 28px;
+}
+
+.profile-avatar {
+  width: 132px;
+  height: 132px;
+  margin-top: -66px; /* pulls the avatar up so it overlaps the banner */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--yellow);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+  font-weight: 900;
+  font-size: 48px;
+}
+
+.profile-head__who {
+  flex-grow: 1;
+  min-width: 0;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-name {
+  font-weight: 900;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.profile-meta {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.profile-bio {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.profile-status {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: var(--border);
+  background: var(--yellow);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.profile-status:empty { display: none; }
+
+
+/* ===== Stats strip ===== */
+/* The 2px gap shows the ink background through = pixel-perfect dividers,
+   and it still works when the grid wraps to 2 columns on smaller screens */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  margin: 0;
+  background: var(--ink);
+  border: var(--border);
+}
+
+.stat {
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: row-reverse; /* number (dd) first, label (dt) second */
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--surface);
+}
+
+.stat dt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stat dd {
+  margin: 0;
+  font-weight: 900;
+  font-size: 26px;
+}
+
+.stat--accent dd { color: var(--accent); }
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabs__list {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: var(--border);
+}
+
+.tab {
+  height: 44px;
+  padding: 0 22px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tab:hover { background: var(--surface); }
+
+.tab[aria-selected="true"] {
+  background: var(--ink);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* ===== Games ===== */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.game-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.game-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.game-card__name {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.game-card__hours {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.bar__fill {
+  height: 100%;
+  width: 0; /* profile.js sets the real width */
+  background: var(--accent);
+  transition: width 600ms steps(12);
+}
+
+/* Chunky "HP bar" segments */
+.bar--segmented .bar__fill {
+  background: repeating-linear-gradient(90deg, var(--accent) 0 10px, transparent 10px 12px);
+}
+
+.show-all {
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  border: 2px dashed var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.show-all:hover { background: var(--surface); }
+
+/* ===== Friends ===== */
+.friend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.friend-card {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.friend-card:hover {
+  color: var(--ink);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.friend-card__avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--yellow);
+  border: var(--border);
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.friend-card__who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.friend-card__name {
+  font-weight: 800;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.friend-card__meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== Screenshots ===== */
+.shot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.shot-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: var(--border);
+}
+
+
+
+/* ===== Player not found ===== */
+.not-found {
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.not-found__code {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.not-found__title {
+  font-weight: 900;
+  font-size: 40px;
+  letter-spacing: -0.02em;
+}
+
+.not-found__text { color: var(--muted); }
+
+/* ===== Smaller screens ===== */
+@media (max-width: 960px) {
+  .game-grid,
+  .friend-grid,
+  .shot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .profile-head__row { flex-wrap: wrap; }
+  .profile-actions { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .game-grid,
+  .friend-grid,
+  .shot-grid { grid-template-columns: minmax(0, 1fr); }
+
+  .profile-banner { height: 120px; }
+
+  .profile-head__row { padding: 0 12px; gap: 16px; }
+
+  .profile-avatar {
+    width: 96px;
+    height: 96px;
+    margin-top: -48px;
+    font-size: 34px;
+  }
+
+  .profile-name { font-size: 26px; }
+  .stat { padding: 12px 14px; }
+  .stat dd { font-size: 22px; }
+}

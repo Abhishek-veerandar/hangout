@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connect Steam · Hangout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/connect-steam.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/connect-steam.js" defer></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a href="index.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+        <a href="home.html" class="nav-link">Skip for now</a>
+      </nav>
+    </header>
+
+    <main class="connect">
+      <ol class="setup-steps" aria-label="Account setup">
+        <li class="setup-step is-done"><span class="setup-step__num">✓</span>Create account</li>
+        <li class="setup-step is-current" id="step-steam" aria-current="step"><span class="setup-step__num">2</span>Connect Steam</li>
+        <li class="setup-step" id="step-meet"><span class="setup-step__num">3</span>Meet players</li>
+      </ol>
+
+      <section class="connect-card">
+
+        <!-- 1. Start -->
+        <div class="connect-state" id="state-start">
+          <p class="terminal-line">&gt; link_steam.exe</p>
+          <h1 class="connect-title" tabindex="-1">Connect your Steam account</h1>
+          <p class="connect-lead">We use your games and playtime to find players like you. It takes about 10 seconds.</p>
+
+          <button type="button" class="btn btn--steam" id="steam-signin">
+            <i class="fab fa-steam" aria-hidden="true"></i>Sign in through Steam
+          </button>
+
+          <div class="permissions">
+            <div class="permissions__col">
+              <h2 class="permissions__title">We read</h2>
+              <ul class="permissions__list permissions__list--yes">
+                <li>Your Steam name and avatar</li>
+                <li>Your games and hours played</li>
+                <li>Your online status, shown to friends only</li>
+              </ul>
+            </div>
+            <div class="permissions__col">
+              <h2 class="permissions__title">We never see</h2>
+              <ul class="permissions__list permissions__list--no">
+                <li>Your Steam password</li>
+                <li>Your payment details</li>
+                <li>Your Steam messages</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="connect-note">You sign in on Steam's own website, then Steam sends you back here.</p>
+        </div>
+
+        <!-- 2. Loading -->
+        <div class="connect-state" id="state-loading" hidden>
+          <p class="terminal-line">&gt; reading_library…</p>
+          <h1 class="connect-title" tabindex="-1">Talking to Steam…</h1>
+          <div class="loader" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- 3. Connected -->
+        <div class="connect-state" id="state-done" hidden>
+          <p class="terminal-line">&gt; library_loaded ✓</p>
+          <h1 class="connect-title" tabindex="-1">You're connected, <span id="done-name"></span>!</h1>
+          <dl class="summary">
+            <div><dt>Games</dt><dd id="sum-games"></dd></div>
+            <div><dt>Hours</dt><dd id="sum-hours"></dd></div>
+            <div><dt>Top game</dt><dd id="sum-top"></dd></div>
+          </dl>
+          <div class="connect-actions">
+            <a href="home.html" class="btn btn--primary">See your matches</a>
+          </div>
+        </div>
+
+        <!-- 4. Private library -->
+        <div class="connect-state" id="state-private" hidden>
+          <p class="terminal-line">&gt; error: library_private</p>
+          <h1 class="connect-title" tabindex="-1">We can't see your games yet</h1>
+          <p class="connect-lead">Your Steam account is connected, but your game details are private, so we can't match you by what you play.</p>
+          <ol class="fix-steps">
+            <li>Open Steam and go to your profile</li>
+            <li>Click <strong>Edit Profile</strong>, then <strong>Privacy Settings</strong></li>
+            <li>Set <strong>Game details</strong> to <strong>Public</strong></li>
+          </ol>
+          <div class="connect-actions">
+            <button type="button" class="btn btn--primary" id="check-again">Check again</button>
+            <a href="home.html" class="btn btn--secondary">Skip for now</a>
+          </div>
+        </div>
+
+      </section>
+
+      <p class="demo-note">Demo: add <code>?demo=private</code> to the address to see the private-library screen.</p>
+    </main>
+
+  </div>
+</body>
+</html>

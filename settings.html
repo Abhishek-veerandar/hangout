@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · Hangout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/settings.js" defer></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <a href="home.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
+      <nav class="site-nav">
+        <a href="home.html" class="nav-link">Home</a>
+        <div class="account">
+          <button type="button" class="account__button" id="account-button"
+                  aria-expanded="false" aria-controls="account-menu" aria-label="Account menu">
+            <span class="nav-avatar" id="nav-avatar"></span>
+            <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="account__menu" id="account-menu" hidden>
+            <li><a href="profile.html">Your profile</a></li>
+            <li><a href="settings.html" aria-current="page">Settings</a></li>
+            <li><a href="index.html">Log out</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="settings">
+      <div class="settings__intro">
+        <p class="terminal-line">&gt; settings.cfg</p>
+        <h1 class="settings__title">Settings</h1>
+      </div>
+
+      <div class="settings__layout">
+        <nav class="settings-nav" aria-label="Settings sections">
+          <a href="#profile">Profile</a>
+          <a href="#account">Account</a>
+          <a href="#privacy">Privacy</a>
+          <a href="#steam">Steam</a>
+          <a href="#danger" class="settings-nav__danger">Delete account</a>
+        </nav>
+
+        <div class="settings__sections">
+
+          <!-- ===== Profile ===== -->
+          <section class="panel" id="profile" aria-labelledby="profile-title">
+            <h2 class="panel__title" id="profile-title">Profile</h2>
+            <form class="panel__form" id="profile-form" novalidate>
+              <div class="field">
+                <label class="field__label" for="set-username">Username</label>
+                <input class="field__input" id="set-username" name="username" type="text"
+                       autocomplete="username" spellcheck="false"
+                       aria-describedby="set-username-hint set-username-error">
+                <p class="field__hint" id="set-username-hint">3–16 characters: letters, numbers or _. Changing it also changes your profile link.</p>
+                <p class="field__error" id="set-username-error"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="set-bio">Bio</label>
+                <input class="field__input" id="set-bio" name="bio" type="text" maxlength="80"
+                       aria-describedby="set-bio-count">
+                <p class="field__hint" id="set-bio-count"></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="set-region">Region</label>
+                <select class="field__input" id="set-region" name="region">
+                  <option value="">Not set</option>
+                  <option>India</option>
+                  <option>Singapore</option>
+                  <option>UAE</option>
+                  <option>Japan</option>
+                  <option>United Kingdom</option>
+                  <option>United States</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="panel__actions">
+                <button type="submit" class="btn btn--primary btn--sm">Save profile</button>
+                <p class="panel__status" role="status"></p>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===== Account ===== -->
+          <section class="panel" id="account" aria-labelledby="account-title">
+            <h2 class="panel__title" id="account-title">Account</h2>
+
+            <form class="panel__form" id="email-form" novalidate>
+              <div class="field">
+                <label class="field__label" for="set-email">Email</label>
+                <input class="field__input" id="set-email" name="email" type="email"
+                       autocomplete="email" aria-describedby="set-email-hint set-email-error">
+                <p class="field__hint" id="set-email-hint">We'll send a link to confirm a new address.</p>
+                <p class="field__error" id="set-email-error"></p>
+              </div>
+              <div class="panel__actions">
+                <button type="submit" class="btn btn--primary btn--sm">Update email</button>
+                <p class="panel__status" role="status"></p>
+              </div>
+            </form>
+
+            <h3 class="panel__subtitle">Change password</h3>
+            <form class="panel__form" id="password-form" novalidate>
+              <div class="field">
+                <label class="field__label" for="set-current">Current password</label>
+                <input class="field__input" id="set-current" type="password"
+                       autocomplete="current-password" aria-describedby="set-current-error">
+                <p class="field__error" id="set-current-error"></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="set-new">New password</label>
+                <input class="field__input" id="set-new" type="password"
+                       autocomplete="new-password" aria-describedby="set-new-error">
+                <p class="field__error" id="set-new-error"></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="set-confirm">Confirm new password</label>
+                <input class="field__input" id="set-confirm" type="password"
+                       autocomplete="new-password" aria-describedby="set-confirm-error">
+                <p class="field__error" id="set-confirm-error"></p>
+              </div>
+              <div class="panel__actions">
+                <button type="submit" class="btn btn--primary btn--sm">Change password</button>
+                <p class="panel__status" role="status"></p>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===== Privacy ===== -->
+          <section class="panel" id="privacy" aria-labelledby="privacy-title">
+            <h2 class="panel__title" id="privacy-title">Privacy</h2>
+            <form class="panel__form" id="privacy-form" novalidate>
+              <label class="toggle">
+                <input type="checkbox" class="toggle__input" name="showStatus">
+                <span class="toggle__text">
+                  <strong>Show my Steam status to friends</strong>
+                  <span>Friends see when you're online or what you're playing. Never shown to strangers.</span>
+                </span>
+              </label>
+
+              <label class="toggle">
+                <input type="checkbox" class="toggle__input" name="showGames">
+                <span class="toggle__text">
+                  <strong>Show my games on my profile</strong>
+                  <span>Your top games and hours. Matching still works if this is off.</span>
+                </span>
+              </label>
+
+              <fieldset class="choices">
+                <legend>Who can send you friend requests</legend>
+                <label class="choice"><input type="radio" name="requestsFrom" value="everyone"> Everyone</label>
+                <label class="choice"><input type="radio" name="requestsFrom" value="matches"> Only people I'm matched with</label>
+                <label class="choice"><input type="radio" name="requestsFrom" value="nobody"> Nobody</label>
+              </fieldset>
+
+              <div class="panel__actions">
+                <button type="submit" class="btn btn--primary btn--sm">Save privacy</button>
+                <p class="panel__status" role="status"></p>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===== Steam ===== -->
+          <section class="panel" id="steam" aria-labelledby="steam-title">
+            <h2 class="panel__title" id="steam-title">Steam</h2>
+            <div class="steam-account">
+              <span class="steam-account__badge">STEAM</span>
+              <div class="steam-account__who">
+                <strong id="steam-name"></strong>
+                <span id="steam-id"></span>
+                <span>Last synced 2h ago</span>
+              </div>
+            </div>
+            <p class="panel__text">Your game details must be public on Steam for your playtime to show up
+              (Steam → Edit Profile → Privacy Settings → Game details: Public).</p>
+            <div class="panel__actions">
+              <button type="button" class="btn btn--secondary btn--sm" id="steam-sync">Sync now</button>
+              <button type="button" class="btn btn--secondary btn--sm" id="steam-disconnect">Disconnect</button>
+              <p class="panel__status" id="steam-status" role="status"></p>
+            </div>
+          </section>
+
+          <!-- ===== Delete account ===== -->
+          <section class="panel panel--danger" id="danger" aria-labelledby="danger-title">
+            <h2 class="panel__title" id="danger-title">Delete account</h2>
+            <p class="panel__text">This permanently deletes your profile, friends and screenshots. It can't be undone.</p>
+            <form class="panel__form" id="delete-form" novalidate>
+              <div class="field">
+                <label class="field__label" for="delete-confirm">Type <strong id="delete-username"></strong> to confirm</label>
+                <input class="field__input" id="delete-confirm" type="text" autocomplete="off" spellcheck="false">
+              </div>
+              <div class="panel__actions">
+                <button type="submit" class="btn btn--danger btn--sm" id="delete-btn" disabled>Delete my account</button>
+                <p class="panel__status" role="status"></p>
+              </div>
+            </form>
+          </section>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>
