@@ -1,7 +1,5 @@
 /* Only the auth page needs a "danger" colour for now */
-:root {
-  --danger: #C2261B;
-}
+
 
 /* ===== Page ===== */
 .auth-page {
@@ -224,7 +222,7 @@
   /* faint pixel dot grid */
   background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
   background-size: 12px 12px;
-  color: #FFFFFF;
+  color: var(--on-ink);
   transition: transform var(--slide);
 }
 .auth.is-signup .auth__toggle { transform: translateX(50%); }
@@ -270,11 +268,11 @@
 
 .btn--ghost {
   background: transparent;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+  color: var(--on-ink);
+  border-color: var(--on-ink);
   font-weight: 700;
 }
-.btn--ghost:hover { color: #FFFFFF; }
+.btn--ghost:hover { color: var(--on-ink); }
 
 /* ===== Phones: no sliding, just show one form at a time ===== */
 @media (max-width: 760px) {

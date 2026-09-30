@@ -1,8 +1,8 @@
 
 /* ===== Shared small avatar ===== */
 .mini-avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -83,7 +83,7 @@
   padding: 0 14px;
   border: none;
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 13px;
@@ -124,7 +124,7 @@
   font-weight: 900;
   cursor: pointer;
 }
-.request__btn--accept { background: var(--accent); color: #FFFFFF; }
+.request__btn--accept { background: var(--accent); color: var(--on-ink); }
 
 /* ===== Cards ===== */
 .card {
@@ -150,7 +150,7 @@
   left: 20px;
   padding: 4px 10px;
   background: var(--accent);
-  color: #FFFFFF;
+  color: var(--on-ink);
   border: var(--border);
   font-family: var(--font-mono);
   font-weight: 700;
@@ -241,7 +241,7 @@
   padding: 0 14px;
   border: var(--border);
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 12px;
@@ -310,7 +310,7 @@
   justify-content: center;
   border: 2px dashed var(--ink);
   background-color: var(--bg);
-  background-image: repeating-linear-gradient(45deg, #E6DFD1 0 2px, transparent 2px 12px);
+  background-image: repeating-linear-gradient(45deg, var(--hatch) 0 2px, transparent 2px 12px);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 13px;
@@ -387,7 +387,7 @@
 .chip:hover { background: var(--bg); }
 .chip[aria-pressed="true"] {
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-weight: 700;
 }
 

@@ -1,19 +1,26 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="js/theme-init.js"></script>
   <title>Settings · Hangout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/fx.css">
   <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/theme.css">
   <script src="js/mockData.js" defer></script>
   <script src="js/utils.js" defer></script>
+  <script src="js/fx.js" defer></script>
   <script src="js/settings.js" defer></script>
 </head>
+
 <body>
   <div class="page">
 
@@ -22,8 +29,8 @@
       <nav class="site-nav">
         <a href="home.html" class="nav-link">Home</a>
         <div class="account">
-          <button type="button" class="account__button" id="account-button"
-                  aria-expanded="false" aria-controls="account-menu" aria-label="Account menu">
+          <button type="button" class="account__button" id="account-button" aria-expanded="false"
+            aria-controls="account-menu" aria-label="Account menu">
             <span class="nav-avatar" id="nav-avatar"></span>
             <span aria-hidden="true">▼</span>
           </button>
@@ -57,19 +64,23 @@
           <section class="panel" id="profile" aria-labelledby="profile-title">
             <h2 class="panel__title" id="profile-title">Profile</h2>
             <form class="panel__form" id="profile-form" novalidate>
+              <fieldset class="char-select">
+                <legend class="field__label">Your character</legend>
+                <div class="char-select__grid" id="char-grid"></div>
+              </fieldset>
               <div class="field">
                 <label class="field__label" for="set-username">Username</label>
-                <input class="field__input" id="set-username" name="username" type="text"
-                       autocomplete="username" spellcheck="false"
-                       aria-describedby="set-username-hint set-username-error">
-                <p class="field__hint" id="set-username-hint">3–16 characters: letters, numbers or _. Changing it also changes your profile link.</p>
+                <input class="field__input" id="set-username" name="username" type="text" autocomplete="username"
+                  spellcheck="false" aria-describedby="set-username-hint set-username-error">
+                <p class="field__hint" id="set-username-hint">3–16 characters: letters, numbers or _. Changing it also
+                  changes your profile link.</p>
                 <p class="field__error" id="set-username-error"></p>
               </div>
 
               <div class="field">
                 <label class="field__label" for="set-bio">Bio</label>
                 <input class="field__input" id="set-bio" name="bio" type="text" maxlength="80"
-                       aria-describedby="set-bio-count">
+                  aria-describedby="set-bio-count">
                 <p class="field__hint" id="set-bio-count"></p>
               </div>
 
@@ -101,8 +112,8 @@
             <form class="panel__form" id="email-form" novalidate>
               <div class="field">
                 <label class="field__label" for="set-email">Email</label>
-                <input class="field__input" id="set-email" name="email" type="email"
-                       autocomplete="email" aria-describedby="set-email-hint set-email-error">
+                <input class="field__input" id="set-email" name="email" type="email" autocomplete="email"
+                  aria-describedby="set-email-hint set-email-error">
                 <p class="field__hint" id="set-email-hint">We'll send a link to confirm a new address.</p>
                 <p class="field__error" id="set-email-error"></p>
               </div>
@@ -116,20 +127,20 @@
             <form class="panel__form" id="password-form" novalidate>
               <div class="field">
                 <label class="field__label" for="set-current">Current password</label>
-                <input class="field__input" id="set-current" type="password"
-                       autocomplete="current-password" aria-describedby="set-current-error">
+                <input class="field__input" id="set-current" type="password" autocomplete="current-password"
+                  aria-describedby="set-current-error">
                 <p class="field__error" id="set-current-error"></p>
               </div>
               <div class="field">
                 <label class="field__label" for="set-new">New password</label>
-                <input class="field__input" id="set-new" type="password"
-                       autocomplete="new-password" aria-describedby="set-new-error">
+                <input class="field__input" id="set-new" type="password" autocomplete="new-password"
+                  aria-describedby="set-new-error">
                 <p class="field__error" id="set-new-error"></p>
               </div>
               <div class="field">
                 <label class="field__label" for="set-confirm">Confirm new password</label>
-                <input class="field__input" id="set-confirm" type="password"
-                       autocomplete="new-password" aria-describedby="set-confirm-error">
+                <input class="field__input" id="set-confirm" type="password" autocomplete="new-password"
+                  aria-describedby="set-confirm-error">
                 <p class="field__error" id="set-confirm-error"></p>
               </div>
               <div class="panel__actions">
@@ -162,7 +173,8 @@
               <fieldset class="choices">
                 <legend>Who can send you friend requests</legend>
                 <label class="choice"><input type="radio" name="requestsFrom" value="everyone"> Everyone</label>
-                <label class="choice"><input type="radio" name="requestsFrom" value="matches"> Only people I'm matched with</label>
+                <label class="choice"><input type="radio" name="requestsFrom" value="matches"> Only people I'm matched
+                  with</label>
                 <label class="choice"><input type="radio" name="requestsFrom" value="nobody"> Nobody</label>
               </fieldset>
 
@@ -196,14 +208,17 @@
           <!-- ===== Delete account ===== -->
           <section class="panel panel--danger" id="danger" aria-labelledby="danger-title">
             <h2 class="panel__title" id="danger-title">Delete account</h2>
-            <p class="panel__text">This permanently deletes your profile, friends and screenshots. It can't be undone.</p>
+            <p class="panel__text">This permanently deletes your profile, friends and screenshots. It can't be undone.
+            </p>
             <form class="panel__form" id="delete-form" novalidate>
               <div class="field">
-                <label class="field__label" for="delete-confirm">Type <strong id="delete-username"></strong> to confirm</label>
+                <label class="field__label" for="delete-confirm">Type <strong id="delete-username"></strong> to
+                  confirm</label>
                 <input class="field__input" id="delete-confirm" type="text" autocomplete="off" spellcheck="false">
               </div>
               <div class="panel__actions">
-                <button type="submit" class="btn btn--danger btn--sm" id="delete-btn" disabled>Delete my account</button>
+                <button type="submit" class="btn btn--danger btn--sm" id="delete-btn" disabled>Delete my
+                  account</button>
                 <p class="panel__status" role="status"></p>
               </div>
             </form>
@@ -214,5 +229,14 @@
     </main>
 
   </div>
+  <template id="char-option-template">
+  <label class="char-option">
+    <input type="radio" name="avatar" class="visually-hidden">
+    <span class="char-option__sprite" aria-hidden="true"></span>
+    <span class="char-option__name"></span>
+  </label>
+</template>
+
 </body>
+
 </html>

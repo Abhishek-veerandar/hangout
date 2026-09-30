@@ -41,7 +41,10 @@ function renderProfile(user, isOwn) {
 
   fillAvatar($("profile-avatar"), user);
   $("profile-name").textContent = user.username;
-  $("profile-meta").textContent = `${user.region} · Joined ${dateFormat.format(new Date(user.joinedAt))}`;
+  const metaParts = [user.region];
+  if (user.avatar) metaParts.push(avatarName(user.avatar));
+  metaParts.push(`Joined ${dateFormat.format(new Date(user.joinedAt))}`);
+  $("profile-meta").textContent = metaParts.join(" · ");
   $("profile-bio").textContent = user.bio;
   $("profile-bio").hidden = !user.bio;
 
@@ -152,7 +155,7 @@ function renderFriends(user, isOwn) {
 
 function setupActions(user) {
   $("edit-btn").addEventListener("click", () => {
-    showStatus("Editing your profile will work once the backend is connected.");
+    location.href = "settings.html"
   });
 
   $("share-btn").addEventListener("click", async () => {

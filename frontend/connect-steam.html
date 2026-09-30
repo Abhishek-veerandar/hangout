@@ -1,20 +1,27 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="js/theme-init.js"></script>
   <title>Connect Steam · Hangout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/fx.css">
   <link rel="stylesheet" href="css/connect-steam.css">
+  <link rel="stylesheet" href="css/theme.css">
   <script src="js/mockData.js" defer></script>
   <script src="js/utils.js" defer></script>
+  <script src="js/fx.js" defer></script>
   <script src="js/connect-steam.js" defer></script>
 </head>
+
 <body>
   <div class="page">
 
@@ -28,7 +35,8 @@
     <main class="connect">
       <ol class="setup-steps" aria-label="Account setup">
         <li class="setup-step is-done"><span class="setup-step__num">✓</span>Create account</li>
-        <li class="setup-step is-current" id="step-steam" aria-current="step"><span class="setup-step__num">2</span>Connect Steam</li>
+        <li class="setup-step is-current" id="step-steam" aria-current="step"><span
+            class="setup-step__num">2</span>Connect Steam</li>
         <li class="setup-step" id="step-meet"><span class="setup-step__num">3</span>Meet players</li>
       </ol>
 
@@ -38,7 +46,8 @@
         <div class="connect-state" id="state-start">
           <p class="terminal-line">&gt; link_steam.exe</p>
           <h1 class="connect-title" tabindex="-1">Connect your Steam account</h1>
-          <p class="connect-lead">We use your games and playtime to find players like you. It takes about 10 seconds.</p>
+          <p class="connect-lead">We use your games and playtime to find players like you. It takes about 10 seconds.
+          </p>
 
           <button type="button" class="btn btn--steam" id="steam-signin">
             <i class="fab fa-steam" aria-hidden="true"></i>Sign in through Steam
@@ -81,9 +90,18 @@
           <p class="terminal-line">&gt; library_loaded ✓</p>
           <h1 class="connect-title" tabindex="-1">You're connected, <span id="done-name"></span>!</h1>
           <dl class="summary">
-            <div><dt>Games</dt><dd id="sum-games"></dd></div>
-            <div><dt>Hours</dt><dd id="sum-hours"></dd></div>
-            <div><dt>Top game</dt><dd id="sum-top"></dd></div>
+            <div>
+              <dt>Games</dt>
+              <dd id="sum-games"></dd>
+            </div>
+            <div>
+              <dt>Hours</dt>
+              <dd id="sum-hours"></dd>
+            </div>
+            <div>
+              <dt>Top game</dt>
+              <dd id="sum-top"></dd>
+            </div>
           </dl>
           <div class="connect-actions">
             <a href="home.html" class="btn btn--primary">See your matches</a>
@@ -94,7 +112,8 @@
         <div class="connect-state" id="state-private" hidden>
           <p class="terminal-line">&gt; error: library_private</p>
           <h1 class="connect-title" tabindex="-1">We can't see your games yet</h1>
-          <p class="connect-lead">Your Steam account is connected, but your game details are private, so we can't match you by what you play.</p>
+          <p class="connect-lead">Your Steam account is connected, but your game details are private, so we can't match
+            you by what you play.</p>
           <ol class="fix-steps">
             <li>Open Steam and go to your profile</li>
             <li>Click <strong>Edit Profile</strong>, then <strong>Privacy Settings</strong></li>
@@ -113,4 +132,5 @@
 
   </div>
 </body>
+
 </html>

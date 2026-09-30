@@ -41,7 +41,7 @@
 
 .setup-step.is-done .setup-step__num {
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
 }
 
 .setup-step.is-current {
@@ -109,11 +109,11 @@
   height: 56px;
   gap: 12px;
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-weight: 700;
   font-size: 16px;
 }
-.btn--steam:hover { color: #FFFFFF; }
+.btn--steam:hover { color: var(--on-ink); }
 .btn--steam i { font-size: 22px; }
 
 /* ===== What we read / never see ===== */

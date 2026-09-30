@@ -1,13 +1,21 @@
 /* ===== Design tokens: change the look here, nowhere else ===== */
 :root {
-  --bg: #F3EEE4;          /* cream page */
-  --surface: #FFFFFF;     /* cards, boxes */
-  --ink: #151515;         /* text, borders, shadows */
-  --muted: #55514A;       /* secondary text */
-  --accent: #2E47F5;      /* blue buttons, bars */
-  --accent-hover: #1A2FC4;
-  --yellow: #FFD84D;      /* highlights */
-  --danger:#C2261B;
+  /* ===== Parchment day (the default theme) ===== */
+  --bg: #F5DDA6;            /* parchment page */
+  --surface: #FBEFD0;       /* cards, boxes */
+  --ink: #300F0A;           /* text, borders, hard shadows */
+  --muted: #803520;         /* secondary text */
+  --accent: #1E1573;        /* indigo: main buttons, links */
+  --accent-hover: #A02018;  /* crimson */
+  --yellow: #F0D71E;        /* gold highlights */
+  --danger: #A02018;        /* errors */
+
+  /* Text that sits ON a coloured fill */
+  --on-ink: #FBEFD0;        /* on --ink or --accent backgrounds */
+  --on-yellow: #300F0A;     /* on gold backgrounds */
+
+  /* Diagonal stripe pattern, mixed from the ink colour */
+  --hatch: color-mix(in srgb, var(--ink) 12%, transparent);
 
   --font-display: "Archivo", sans-serif;
   --font-mono: "Space Mono", monospace;

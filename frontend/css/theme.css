@@ -1,0 +1,97 @@
+/* ============================================================
+   Themes: Parchment day (default, in base.css) + Guild night
+   ============================================================ */
+
+/* ===== Guild night: same variable names, new values ===== */
+html[data-theme="night"] {
+  color-scheme: dark; /* scrollbars and dropdown menus go dark too */
+
+  --bg: #120C2C;
+  --surface: #1E1747;
+  --ink: #F5DDA6;
+  --muted: #C9B8E8;
+  --accent: #6DE6F2;
+  --accent-hover: #F0D71E;
+  --yellow: #F0D71E;
+  --danger: #EF692F;
+
+  --on-ink: #120C2C;
+  --on-yellow: #120C2C;
+}
+
+html[data-theme="day"] {
+  color-scheme: light;
+}
+
+/* A faint starfield behind night pages */
+html[data-theme="night"] body {
+  background-image:
+    radial-gradient(color-mix(in srgb, var(--ink) 35%, transparent) 1px, transparent 1px),
+    radial-gradient(color-mix(in srgb, var(--accent) 35%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px, 72px 72px;
+  background-position: 0 0, 24px 30px;
+}
+
+/* ===== Text on gold stays dark in BOTH themes =====
+   In night mode --ink turns light, so anything sitting on a gold
+   fill needs its own dark text colour. */
+.nav-avatar,
+.mini-avatar,
+.profile-avatar,
+.friend-card__avatar,
+.requests,
+.profile-status,
+.form-status,
+.dialogue__speaker,
+.toast__icon,
+.sound-toggle[aria-pressed="true"],
+.theme-toggle[aria-pressed="true"],
+.setup-step.is-current,
+.account__menu a:hover,
+.settings-nav a:hover,
+.online-row[data-state="looking-to-play"] .online-row__link,
+.online-row[data-state="looking-to-play"] .online-row__status {
+  color: var(--on-yellow);
+}
+
+.setup-step.is-current .setup-step__num {
+  color: var(--on-yellow);
+  border-color: var(--on-yellow);
+}
+
+/* Settings switches: the knob stays visible on gold */
+.toggle__input:checked::before {
+  background: var(--on-yellow);
+}
+
+/* ===== Night-only touch-ups ===== */
+html[data-theme="night"] .rec__badge {
+  background: var(--yellow);
+  color: var(--on-yellow);
+}
+
+html[data-theme="night"] .toast__title,
+html[data-theme="night"] .dialogue__next {
+  color: var(--on-ink);
+}
+
+html[data-theme="night"] .cursor {
+  background: var(--on-ink);
+}
+
+/* ===== The ☾ Night button (fx.js adds it to every header) ===== */
+.theme-toggle {
+  height: 32px;
+  padding: 0 10px;
+  border: var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.theme-toggle[aria-pressed="true"] {
+  background: var(--yellow);
+}

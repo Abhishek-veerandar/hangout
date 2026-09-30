@@ -110,10 +110,10 @@
 
 .btn--danger {
   background: var(--danger);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-weight: 700;
 }
-.btn--danger:hover { color: #FFFFFF; }
+.btn--danger:hover { color: var(--on-ink); }
 
 /* ===== Fields ===== */
 .field {
@@ -253,7 +253,7 @@
 .steam-account__badge {
   padding: 6px 8px;
   background: var(--ink);
-  color: #FFFFFF;
+  color: var(--on-ink);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 11px;
@@ -294,4 +294,55 @@
 @media (max-width: 640px) {
   .settings__title { font-size: 30px; }
   .panel { padding: 18px; }
+}
+
+/* ===== Character select ===== */
+.char-select {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.char-select legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.char-select__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.char-option {
+  padding: 12px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: var(--border);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.char-option:hover { background: var(--surface); }
+
+/* The picked character: :has() styles the card based on the radio inside it */
+.char-option:has(input:checked) {
+  background: var(--yellow);
+  color: var(--on-yellow);
+  box-shadow: var(--shadow-sm);
+}
+
+.char-option:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.char-option__sprite {
+  width: 64px;  /* 32px sprite × 2 */
+  height: 64px;
 }

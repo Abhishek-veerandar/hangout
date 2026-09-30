@@ -1,18 +1,25 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="js/theme-init.js"></script>
   <title>Log in · Hangout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/fx.css">
   <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <script src="js/fx.js" defer></script>
   <script src="js/auth.js" defer></script>
 </head>
+
 <body>
   <div class="page auth-page">
 
@@ -36,10 +43,12 @@
             <h2 class="auth-form__title">Create account</h2>
 
             <div class="social">
-              <button type="button" class="btn btn--social" data-message="Steam sign-in will work once the backend is connected.">
+              <button type="button" class="btn btn--social"
+                data-message="Steam sign-in will work once the backend is connected.">
                 <i class="fab fa-steam" aria-hidden="true"></i>Steam
               </button>
-              <button type="button" class="btn btn--social" data-message="Discord sign-in will work once the backend is connected.">
+              <button type="button" class="btn btn--social"
+                data-message="Discord sign-in will work once the backend is connected.">
                 <i class="fab fa-discord" aria-hidden="true"></i>Discord
               </button>
             </div>
@@ -48,29 +57,29 @@
 
             <div class="field">
               <label class="field__label" for="su-username">Username</label>
-              <input class="field__input" id="su-username" name="username" type="text"
-                     autocomplete="username" data-rule="username" aria-describedby="su-username-error">
+              <input class="field__input" id="su-username" name="username" type="text" autocomplete="username"
+                data-rule="username" aria-describedby="su-username-error">
               <p class="field__error" id="su-username-error"></p>
             </div>
 
             <div class="field">
               <label class="field__label" for="su-email">Email</label>
-              <input class="field__input" id="su-email" name="email" type="email"
-                     autocomplete="email" data-rule="email" aria-describedby="su-email-error">
+              <input class="field__input" id="su-email" name="email" type="email" autocomplete="email" data-rule="email"
+                aria-describedby="su-email-error">
               <p class="field__error" id="su-email-error"></p>
             </div>
 
             <div class="field">
               <label class="field__label" for="su-password">Password</label>
-              <input class="field__input" id="su-password" name="password" type="password"
-                     autocomplete="new-password" data-rule="newPassword" aria-describedby="su-password-error">
+              <input class="field__input" id="su-password" name="password" type="password" autocomplete="new-password"
+                data-rule="newPassword" aria-describedby="su-password-error">
               <p class="field__error" id="su-password-error"></p>
             </div>
 
             <div class="field">
               <label class="field__label" for="su-confirm">Confirm password</label>
-              <input class="field__input" id="su-confirm" name="confirm" type="password"
-                     autocomplete="new-password" data-rule="confirmPassword" aria-describedby="su-confirm-error">
+              <input class="field__input" id="su-confirm" name="confirm" type="password" autocomplete="new-password"
+                data-rule="confirmPassword" aria-describedby="su-confirm-error">
               <p class="field__error" id="su-confirm-error"></p>
             </div>
 
@@ -91,10 +100,12 @@
             <h2 class="auth-form__title">Sign in</h2>
 
             <div class="social">
-              <button type="button" class="btn btn--social" data-message="Steam sign-in will work once the backend is connected.">
+              <button type="button" class="btn btn--social"
+                data-message="Steam sign-in will work once the backend is connected.">
                 <i class="fab fa-steam" aria-hidden="true"></i>Steam
               </button>
-              <button type="button" class="btn btn--social" data-message="Discord sign-in will work once the backend is connected.">
+              <button type="button" class="btn btn--social"
+                data-message="Discord sign-in will work once the backend is connected.">
                 <i class="fab fa-discord" aria-hidden="true"></i>Discord
               </button>
             </div>
@@ -103,20 +114,21 @@
 
             <div class="field">
               <label class="field__label" for="si-email">Email</label>
-              <input class="field__input" id="si-email" name="email" type="email"
-                     autocomplete="email" data-rule="email" aria-describedby="si-email-error">
+              <input class="field__input" id="si-email" name="email" type="email" autocomplete="email" data-rule="email"
+                aria-describedby="si-email-error">
               <p class="field__error" id="si-email-error"></p>
             </div>
 
             <div class="field">
               <label class="field__label" for="si-password">Password</label>
               <input class="field__input" id="si-password" name="password" type="password"
-                     autocomplete="current-password" data-rule="password" aria-describedby="si-password-error">
+                autocomplete="current-password" data-rule="password" aria-describedby="si-password-error">
               <p class="field__error" id="si-password-error"></p>
             </div>
 
             <div class="auth-form__row">
-              <button type="button" class="link-btn" data-message="Password reset will work once the backend is connected.">Forgot your password?</button>
+              <button type="button" class="link-btn"
+                data-message="Password reset will work once the backend is connected.">Forgot your password?</button>
             </div>
 
             <p class="form-status" role="status"></p>
@@ -154,4 +166,5 @@
 
   </div>
 </body>
+
 </html>

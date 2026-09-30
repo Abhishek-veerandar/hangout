@@ -1,0 +1,134 @@
+/* ============================================================
+   Hangout FX: page transitions, scroll-in, sound toggle, toasts
+   ============================================================ */
+
+/* ===== Pixel page transitions =====
+   Pure CSS. Works in Chrome and Edge on http:// pages (not file://).
+   Browsers that don't support it just change pages normally. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: fx-page-out 200ms steps(4) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: fx-page-in 360ms steps(8) both;
+  }
+}
+
+@keyframes fx-page-out {
+  to { opacity: 0; }
+}
+
+/* The new page is revealed left to right in 8 chunky steps */
+@keyframes fx-page-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* ===== Scroll-in animations =====
+   fx.js adds .fx-reveal to <html> and .reveal to each section.
+   Without JS, nothing is hidden. */
+.fx-reveal .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 320ms steps(4), transform 320ms steps(4);
+}
+
+.fx-reveal .reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== Sound toggle (fx.js adds it to every header) ===== */
+.sound-toggle {
+  height: 32px;
+  padding: 0 10px;
+  border: var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: line-through;
+  cursor: pointer;
+}
+
+.sound-toggle[aria-pressed="true"] {
+  background: var(--yellow);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* ===== Toasts ===== */
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  max-width: min(360px, calc(100vw - 40px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--ink);
+  color: var(--on-ink);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--yellow);
+  animation: fx-toast-in 280ms steps(4) both;
+}
+
+.toast.is-leaving {
+  animation: fx-toast-out 200ms steps(3) both;
+}
+
+@keyframes fx-toast-in {
+  from { transform: translateX(120%); }
+  to   { transform: none; }
+}
+
+@keyframes fx-toast-out {
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+.toast__icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.toast__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toast__title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.toast__text {
+  font-weight: 800;
+  font-size: 15px;
+}

@@ -65,8 +65,8 @@
   box-shadow: 0 0 0 var(--ink);
 }
 
-.btn--primary { background: var(--accent); color: #FFFFFF; font-weight: 700; }
-.btn--primary:hover { color: #FFFFFF; }
+.btn--primary { background: var(--accent); color: var(--on-ink); font-weight: 700; }
+.btn--primary:hover { color: var(--on-ink); }
 
 .btn--secondary { background: var(--surface); color: var(--ink); }
 .btn--secondary:hover { color: var(--ink); }
@@ -479,3 +479,16 @@
 }
 .account__menu li + li a { border-top: var(--border); }
 .account__menu a:hover { background: var(--yellow); color: var(--ink); }
+
+/* ===== Animated pixel avatars (utils.js sets the image and frame count) ===== */
+.has-sprite {
+  image-rendering: pixelated; /* keep pixels sharp when scaled up */
+  animation: sprite-idle 800ms steps(var(--frames, 4), jump-none) infinite;
+}
+
+/* jump-none makes the steps land exactly on each frame:
+   with 4 frames → 0%, 33%, 66%, 100% */
+@keyframes sprite-idle {
+  from { background-position: 0% 0; }
+  to   { background-position: 100% 0; }
+}

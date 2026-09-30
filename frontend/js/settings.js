@@ -50,6 +50,24 @@ function setupProfileForm() {
   }
   bio.addEventListener("input", updateCount);
   updateCount();
+    // ----- Character select -----
+  const grid = $("char-grid");
+  const template = $("char-option-template");
+
+  AVATARS.forEach((id) => {
+    const option = template.content.cloneNode(true);
+    const input = option.querySelector("input");
+    input.value = id;
+    input.checked = me.avatar === id;
+    setSprite(option.querySelector(".char-option__sprite"), avatarSrc(id));
+    option.querySelector(".char-option__name").textContent = avatarName(id);
+    grid.append(option);
+  });
+
+  // Preview the pick in the header straight away, before saving
+  grid.addEventListener("change", (event) => {
+    fillAvatar($("nav-avatar"), { ...me, avatar: event.target.value });
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -71,6 +89,12 @@ function setupProfileForm() {
     me.username = name;
     me.bio = bio.value.trim();
     me.region = region.value;
+        me.avatar = form.elements.avatar.value || null;
+    try {
+      if (me.avatar) localStorage.setItem("hangout-avatar", me.avatar);
+    } catch {
+      // not remembered, but still changed for this page
+    }
 
     fillAvatar($("nav-avatar"), me);
     $("delete-username").textContent = me.username;

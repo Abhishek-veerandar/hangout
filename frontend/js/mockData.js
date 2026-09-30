@@ -211,3 +211,31 @@ const MOCK_RECOMMENDATIONS = [
   { userId: "u_008", score: 0.70, reason: "Plays Terraria and Stardew Valley, like you." },
   { userId: "u_009", score: 0.64, reason: "Top game is Hollow Knight, your #3." },
 ];
+
+// Which character each mock user picked (the backend will store this per user)
+const MOCK_AVATARS = {
+  u_001: "mage",
+  u_002: "knight",
+  u_003: "archer",
+  u_004: "monk",
+  u_005: "smith",
+  u_006: "assassin",
+  u_007: "monk",
+  u_008: "archer",
+  u_009: "assassin",
+  u_010: "smith",
+  u_011: "knight",
+  // u_012 (byte_x) has none on purpose, to test the initials fallback
+};
+
+MOCK_USERS.forEach((user) => {
+  user.avatar = MOCK_AVATARS[user.id] || null;
+});
+
+// Until the backend exists, remember YOUR pick in this browser
+try {
+  const saved = localStorage.getItem("hangout-avatar");
+  if (saved) MOCK_USERS.find((user) => user.id === CURRENT_USER_ID).avatar = saved;
+} catch {
+  // storage blocked: just use the default
+}
