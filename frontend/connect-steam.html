@@ -15,10 +15,12 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/fx.css">
   <link rel="stylesheet" href="css/connect-steam.css">
+
   <link rel="stylesheet" href="css/theme.css">
   <script src="js/mockData.js" defer></script>
   <script src="js/utils.js" defer></script>
   <script src="js/fx.js" defer></script>
+
   <script src="js/connect-steam.js" defer></script>
 </head>
 
@@ -83,47 +85,47 @@
             <span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span>
           </div>
-        </div>
 
-        <!-- 3. Connected -->
-        <div class="connect-state" id="state-done" hidden>
-          <p class="terminal-line">&gt; library_loaded ✓</p>
-          <h1 class="connect-title" tabindex="-1">You're connected, <span id="done-name"></span>!</h1>
-          <dl class="summary">
-            <div>
-              <dt>Games</dt>
-              <dd id="sum-games"></dd>
+          <!-- 3. Connected -->
+          <div class="connect-state" id="state-done" hidden>
+            <p class="terminal-line">&gt; library_loaded ✓</p>
+            <h1 class="connect-title" tabindex="-1">You're connected, <span id="done-name"></span>!</h1>
+            <dl class="summary">
+              <div>
+                <dt>Games</dt>
+                <dd id="sum-games"></dd>
+              </div>
+              <div>
+                <dt>Hours</dt>
+                <dd id="sum-hours"></dd>
+              </div>
+              <div>
+                <dt>Top game</dt>
+                <dd id="sum-top"></dd>
+              </div>
+            </dl>
+            <div class="connect-actions">
+              <a href="home.html" class="btn btn--primary">See your matches</a>
             </div>
-            <div>
-              <dt>Hours</dt>
-              <dd id="sum-hours"></dd>
-            </div>
-            <div>
-              <dt>Top game</dt>
-              <dd id="sum-top"></dd>
-            </div>
-          </dl>
-          <div class="connect-actions">
-            <a href="home.html" class="btn btn--primary">See your matches</a>
           </div>
-        </div>
 
-        <!-- 4. Private library -->
-        <div class="connect-state" id="state-private" hidden>
-          <p class="terminal-line">&gt; error: library_private</p>
-          <h1 class="connect-title" tabindex="-1">We can't see your games yet</h1>
-          <p class="connect-lead">Your Steam account is connected, but your game details are private, so we can't match
-            you by what you play.</p>
-          <ol class="fix-steps">
-            <li>Open Steam and go to your profile</li>
-            <li>Click <strong>Edit Profile</strong>, then <strong>Privacy Settings</strong></li>
-            <li>Set <strong>Game details</strong> to <strong>Public</strong></li>
-          </ol>
-          <div class="connect-actions">
-            <button type="button" class="btn btn--primary" id="check-again">Check again</button>
-            <a href="home.html" class="btn btn--secondary">Skip for now</a>
+          <!-- 4. Private library -->
+          <div class="connect-state" id="state-private" hidden>
+            <p class="terminal-line">&gt; error: library_private</p>
+            <h1 class="connect-title" tabindex="-1">We can't see your games yet</h1>
+            <p class="connect-lead">Your Steam account is connected, but your game details are private, so we can't
+              match
+              you by what you play.</p>
+            <ol class="fix-steps">
+              <li>Open Steam and go to your profile</li>
+              <li>Click <strong>Edit Profile</strong>, then <strong>Privacy Settings</strong></li>
+              <li>Set <strong>Game details</strong> to <strong>Public</strong></li>
+            </ol>
+            <div class="connect-actions">
+              <button type="button" class="btn btn--primary" id="check-again">Check again</button>
+              <a href="home.html" class="btn btn--secondary">Skip for now</a>
+            </div>
           </div>
-        </div>
 
       </section>
 

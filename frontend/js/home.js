@@ -72,6 +72,20 @@ function renderRequests() {
   });
 }
 
+/* ---------- Achievements ---------- */
+// Later, the backend decides these and remembers which ones you already got.
+
+const FRIEND_ACHIEVEMENTS = [
+  { count: 1,  title: "Player 2 has joined",    text: "Your first friend on Hangout." },
+  { count: 5,  title: "Squad goals: 5 friends", text: "That's a full party." },
+  { count: 10, title: "Raid ready: 10 friends", text: "Time to plan something big." },
+];
+
+function checkFriendAchievements() {
+  const unlocked = FRIEND_ACHIEVEMENTS.find((a) => a.count === me.friendIds.length);
+  if (unlocked) showToast(unlocked);
+}
+
 function answerRequest(person, accepted) {
   state.incoming = state.incoming.filter((id) => id !== person.id);
 
@@ -79,6 +93,7 @@ function answerRequest(person, accepted) {
     me.friendIds.push(person.id);
     person.friendIds.push(me.id);
     showStatus(`You and ${person.username} are now friends.`);
+    checkFriendAchievements();
   } else {
     showStatus(`Declined ${person.username}'s request.`);
   }
@@ -145,8 +160,7 @@ function renderOnline() {
 
     list.append(item);
   });
-
-  $("online-empty").hidden = online.length > 0;
+ $("online-empty").hidden = online.length > 0;
 }
 
 /* ---------- Add friend by username ---------- */

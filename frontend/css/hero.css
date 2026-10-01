@@ -1,0 +1,150 @@
+/* ============================================================
+   The 404 guard: the scarf hero standing watch over missing pages
+   Sheets live in img/fighters/, every frame is 128 x 128.
+   ============================================================ */
+
+/* ---------- The figure ----------
+   The sheets have empty space above and below him, so .hero-fig only
+   shows the band he stands in (y 36 to 84 of each frame).
+   --scale must stay a whole number so the pixels stay crisp. */
+.hero-fig {
+  --scale: 2;
+  position: relative;
+  flex-shrink: 0;
+  width: calc(128px * var(--scale));
+  height: calc(48px * var(--scale));
+  pointer-events: none;
+}
+
+.hero-sprite {
+  position: absolute;
+  left: 0;
+  top: calc(-36px * var(--scale));
+  width: calc(128px * var(--scale));
+  height: calc(128px * var(--scale));
+  background-repeat: no-repeat;
+  background-size: calc(var(--frames, 1) * 100%) 100%;
+  image-rendering: pixelated;
+}
+
+.hero-sprite.is-looping {
+  animation: hero-frames var(--duration) steps(var(--frames), jump-none) infinite;
+}
+
+.hero-sprite.is-once {
+  animation: hero-frames var(--duration) steps(var(--frames), jump-none) 1 forwards;
+}
+
+@keyframes hero-frames {
+  from { background-position: 0 0; }
+  to   { background-position: 100% 0; }
+}
+
+/* ---------- The sheets: file, frame count, speed ---------- */
+.hero-sprite[data-sheet="idle"]    { background-image: url("../img/fighters/hero-idle.png");    --frames: 10; --duration: 1000ms; }
+.hero-sprite[data-sheet="slash"]   { background-image: url("../img/fighters/hero-slash.png");   --frames: 3;  --duration: 270ms; }
+.hero-sprite[data-sheet="sheathe"] { background-image: url("../img/fighters/hero-sheathe.png"); --frames: 4;  --duration: 440ms; }
+.hero-sprite[data-sheet="still"]   { background-image: url("../img/fighters/hero-still.png");   --frames: 1; }
+
+/* ---------- The 404 guard ---------- */
+.hero-guard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.hero-guard__button {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.hero-guard__dmg {
+  position: absolute;
+  left: 58%;
+  top: -6px;
+  opacity: 0;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--danger);
+  text-shadow: 2px 2px 0 var(--bg);
+}
+
+.hero-guard__dmg.is-hit {
+  animation: hero-dmg 700ms steps(7) forwards;
+}
+
+@keyframes hero-dmg {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-40px); }
+}
+
+.hero-guard__hits {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- 404 page layout ---------- */
+.lost {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px 32px;
+  padding-block: 48px;
+}
+
+.lost__code {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(88px, 16vw, 160px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.lost__code span {
+  color: var(--danger);
+}
+
+.lost__text {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.lost__title {
+  margin: 0;
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+}
+
+.lost__lead {
+  margin: 0;
+  color: var(--muted);
+}
+
+.lost__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 560px) {
+  .lost {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-fig {
+    --scale: 1;
+  }
+}

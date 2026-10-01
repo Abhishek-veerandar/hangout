@@ -14,11 +14,15 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/fx.css">
   <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/game.css">
   <link rel="stylesheet" href="css/theme.css">
   <!-- defer keeps the order: mockData.js runs before profile.js -->
   <script src="js/mockData.js" defer></script>
   <script src="js/utils.js" defer></script>
   <script src="js/fx.js" defer></script>
+  <script src="js/game.js" defer></script>
+  <script src="js/hero.js" defer></script>
   <script src="js/profile.js" defer></script>
 </head>
 
@@ -84,6 +88,10 @@
             <dt>Friends</dt>
             <dd id="stat-friends"></dd>
           </div>
+          <div class="stat">
+            <dt>Arcade best</dt>
+            <dd id="stat-arcade"></dd>
+          </div>
         </dl>
 
         <section class="tabs">
@@ -109,13 +117,14 @@
 
           <div class="tab-panel" role="tabpanel" id="panel-friends" aria-labelledby="tab-friends" hidden>
             <ul class="friend-grid" id="friend-grid"></ul>
-            <p class="empty-state" id="friends-empty" hidden></p>
+            <div class="empty-state" id="friends-empty" hidden></div>
           </div>
         </section>
 
       </div>
 
       <!-- ===== Shown when ?user= doesn't match anyone ===== -->
+      <div data-hero="guard"></div>
       <div class="not-found" id="not-found" hidden>
         <p class="not-found__code">&gt; error 404</p>
         <h1 class="not-found__title">Player not found</h1>

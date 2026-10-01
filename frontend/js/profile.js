@@ -52,6 +52,7 @@ function renderProfile(user, isOwn) {
   $("stat-games").textContent = numberFormat.format(games.length);
   $("stat-hours").textContent = numberFormat.format(totalHours);
   $("stat-friends").textContent = user.friendIds.length;
+  $("stat-arcade").textContent = user.arcadeBest ? numberFormat.format(user.arcadeBest) : "—";
 
   $(isOwn ? "own-actions" : "visitor-actions").hidden = false;
 
@@ -234,3 +235,11 @@ if (user) {
 } else {
   showNotFound(requestedName);
 }
+
+// A new best in the game popup updates your own profile straight away
+document.addEventListener("arcade:best", (event) => {
+  currentUser.arcadeBest = event.detail.score;
+  if (user && user.id === CURRENT_USER_ID) {
+    $("stat-arcade").textContent = numberFormat.format(event.detail.score);
+  }
+});
