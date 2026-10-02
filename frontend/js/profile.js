@@ -232,7 +232,7 @@ loadAccount().then(() => {
   const user = requestedName ? findUserByName(requestedName) : currentUser;
 
   fillAvatar($("nav-avatar"), currentUser);
-
+  setupAccountMenu();
   if (user) {
     renderProfile(user, user.id === CURRENT_USER_ID);
     setupTabs();
