@@ -1,0 +1,16 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets: API keys, passwords (never commit these)
+.env
+
+# Database: real users' emails and password hashes
+*.db
+
+# Editors and OS clutter
+.vscode/
+.DS_Store
+Thumbs.db

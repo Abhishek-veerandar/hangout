@@ -386,6 +386,6 @@ loadRecommendations(); // async fetch() to backend recommender
 setupAccountMenu();
 setupRequestsToggle();
 setupAddFriend();
-setupUpload();
+setupUpload();via 
 setupSync();
 setupFilters();

@@ -6,12 +6,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.recommender import load_model, player_features
+from app.db import init_db
 
 # backend/app/main.py → up three levels is the repo root → frontend/
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 
 app = FastAPI(title="Hangout API")
-
+init_db()   # create the database tables on startup (does nothing if they exist)
 # Load the model ONCE when the server starts, not on every request
 recommender = load_model()
 
