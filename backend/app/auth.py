@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 # scrypt settings: higher N = slower = harder to brute-force (16384 is a common choice)
 SCRYPT_N, SCRYPT_R, SCRYPT_P = 2**14, 8, 1
 
-USERNAME_RE = re.compile(r"^[A-Za-z0-9_]{3,20}$")
+USERNAME_RE = re.compile(r"^[A-Za-z0-9_]{3,16}$")
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
@@ -39,7 +39,7 @@ def verify_password(password, stored):
 def signup_error(username, email, password):
     """The same rules as auth.js. The server checks again because anyone can skip the browser."""
     if not USERNAME_RE.match(username):
-        return "Username must be 3 to 20 letters, numbers or underscores."
+        return "Username must be 3 to 16 letters, numbers or underscores."
     if not EMAIL_RE.match(email):
         return "That doesn't look like an email address."
     if len(password) < 8:

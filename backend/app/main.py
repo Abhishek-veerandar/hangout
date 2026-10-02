@@ -1,24 +1,15 @@
+import sqlite3
 from pathlib import Path
 
-import sqlite3
-
-from fastapi import FastAPI, HTTPException
-
-from app.auth import hash_password, signup_error
-from app.db import get_connection, init_db
-
-from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
-
-from app.auth import (SESSION_DAYS, create_session, delete_session, hash_password,
-                      signup_error, user_for_session, verify_password)
-
 import numpy as np
-from fastapi import FastAPI
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from app.auth import (SESSION_DAYS, create_session, delete_session, hash_password,
+                      signup_error, user_for_session, verify_password)
+from app.db import get_connection, init_db
 from app.recommender import load_model, player_features
-from app.db import init_db
 
 # backend/app/main.py → up three levels is the repo root → frontend/
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
