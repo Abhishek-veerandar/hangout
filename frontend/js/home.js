@@ -26,6 +26,8 @@ const state = {
   outgoing: new Set(),                 // ids I've sent requests to
   dismissed: new Set(),                // recommendations I marked "not interested"
   filter: "all",
+  recs:[],
+  recsLoading:true,
 };
 
 /* ---------- Intro ---------- */
@@ -231,6 +233,53 @@ function setupSync() {
     showStatus("Syncing with Steam will work once the backend is connected.");
   });
 }
+/* ---------- Asking the model for matches ---------- */
+// Sends me + everyone I could be matched with to the backend.
+// The PyTorch-trained model scores every pair and sends back the best first.
+
+function toPlayer(user) {
+  return {
+    id: user.id,
+    region: user.region,
+    games: user.games.map((game) => ({
+      name: game.name,
+      genre: game.genre || "",
+      minutes: game.minutes || 0,
+    })),
+  };
+}
+
+async function loadRecommendations() {
+  const candidates = MOCK_USERS.filter((user) =>
+    user.id !== me.id &&
+    !me.friendIds.includes(user.id) &&
+    !state.incoming.includes(user.id)
+  );
+
+  try {
+    const response = await fetch("/api/recommendations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        me: toPlayer(me),
+        candidates: candidates.map(toPlayer),
+        limit: candidates.length,   // ranked list of everyone; filters and ✕ narrow it down here
+      }),
+    });
+    if (!response.ok) throw new Error(`Server answered ${response.status}`);
+
+    const data = await response.json();
+    state.recs = data.results.map((r) => ({ userId: r.id, score: r.score, reason: r.reason }));
+  } catch (error) {
+    // No backend running (e.g. python -m http.server)? Fall back to the mock list.
+    console.warn("Recommender not reachable, using mock data:", error);
+    state.recs = MOCK_RECOMMENDATIONS;
+  }
+
+  state.recsLoading = false;
+  renderIntro();
+  renderRecommendations();
+}
 
 /* ---------- Recommendations ---------- */
 
@@ -241,7 +290,7 @@ function matchesFilter(user, filter) {
 }
 
 function getRecommendations(filter) {
-  return MOCK_RECOMMENDATIONS
+  return state.recs
     .filter((rec) => !state.dismissed.has(rec.userId))
     .map((rec) => ({ ...rec, user: byId(rec.userId) }))
     .filter((rec) =>
@@ -304,9 +353,13 @@ function renderRecommendations() {
   });
 
   empty.hidden = recs.length > 0;
-  empty.textContent = all.length === 0
-    ? "No new matches right now. Check back after your next Steam sync."
-    : "No matches for this filter.";
+  if (state.recsLoading) {
+    empty.textContent = "Finding players like you…";
+  } else if (all.length === 0) {
+    empty.textContent = "No new matches right now. Check back after your next Steam sync.";
+  } else {
+    empty.textContent = "No matches for this filter.";
+  }
 }
 
 function setupFilters() {
@@ -328,6 +381,7 @@ renderIntro();
 renderRequests();
 renderOnline();
 renderRecommendations();
+loadRecommendations(); // async fetch() to backend recommender
 
 setupAccountMenu();
 setupRequestsToggle();
