@@ -6,7 +6,6 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", year: "num
 
 /* ---------- Small helpers ---------- */
 
-
 function toHours(minutes) {
   return Math.round(minutes / 60);
 }
@@ -18,10 +17,6 @@ function findUserByName(username) {
 function findUserById(id) {
   return MOCK_USERS.find((user) => user.id === id);
 }
-
-
-
-
 
 function showStatus(message) {
   $("profile-status").textContent = message;
@@ -156,7 +151,7 @@ function renderFriends(user, isOwn) {
 
 function setupActions(user) {
   $("edit-btn").addEventListener("click", () => {
-    location.href = "settings.html"
+    location.href = "settings.html";
   });
 
   $("share-btn").addEventListener("click", async () => {
@@ -222,24 +217,34 @@ function showNotFound(name) {
 /* ---------- Start ---------- */
 // profile.html              → your own profile
 // profile.html?user=rook_07 → someone else's profile
+//
+// async because we wait for loadAccount() first. It asks the server who is
+// logged in and copies your real username/region/bio/avatar onto the mock
+// current user. Logged out → it sends you to auth.html.
 
-const currentUser = findUserById(CURRENT_USER_ID);
-const requestedName = new URLSearchParams(location.search).get("user");
-const user = requestedName ? findUserByName(requestedName) : currentUser;
+/* ---------- Start ---------- */
+// profile.html              → your own profile
+// profile.html?user=rook_07 → someone else's profile
 
-fillAvatar($("nav-avatar"), currentUser);
+loadAccount().then(() => {
+  const currentUser = findUserById(CURRENT_USER_ID);
+  const requestedName = new URLSearchParams(location.search).get("user");
+  const user = requestedName ? findUserByName(requestedName) : currentUser;
 
-if (user) {
-  renderProfile(user, user.id === CURRENT_USER_ID);
-  setupTabs();
-} else {
-  showNotFound(requestedName);
-}
+  fillAvatar($("nav-avatar"), currentUser);
 
-// A new best in the game popup updates your own profile straight away
-document.addEventListener("arcade:best", (event) => {
-  currentUser.arcadeBest = event.detail.score;
-  if (user && user.id === CURRENT_USER_ID) {
-    $("stat-arcade").textContent = numberFormat.format(event.detail.score);
+  if (user) {
+    renderProfile(user, user.id === CURRENT_USER_ID);
+    setupTabs();
+  } else {
+    showNotFound(requestedName);
   }
+
+  // A new best in the game popup updates your own profile straight away
+  document.addEventListener("arcade:best", (event) => {
+    currentUser.arcadeBest = event.detail.score;
+    if (user && user.id === CURRENT_USER_ID) {
+      $("stat-arcade").textContent = numberFormat.format(event.detail.score);
+    }
+  });
 });

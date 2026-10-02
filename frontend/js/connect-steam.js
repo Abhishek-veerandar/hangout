@@ -75,4 +75,4 @@ $("check-again").addEventListener("click", () => {
 
 /* ---------- Start ---------- */
 
-showState("start", false);
+loadAccount().then(() => showState("start", false));

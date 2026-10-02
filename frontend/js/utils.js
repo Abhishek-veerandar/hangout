@@ -100,4 +100,52 @@ function setupAccountMenu() {
       button.focus();
     }
   });
+  setupLogout();
+ 
+}
+
+/* ---------- Who's logged in ---------- */
+// Asks the server who owns this browser's login cookie.
+// - Logged in: copies your real name (and region, bio, character) onto the mock
+//   "current user", so every page shows YOU. Games and friends stay mock for now.
+// - Not logged in: sends you to the log-in page.
+// - No backend running (python -m http.server): demo mode with the mock user.
+async function loadAccount() {
+  let response;
+  try {
+    response = await fetch("/api/me");
+  } catch {
+    return null;                       // no server at all: demo mode
+  }
+
+  if (response.status === 401) {
+    location.href = "auth.html";       // not logged in
+    return new Promise(() => {});      // never finishes: the page is leaving anyway
+  }
+  if (!response.ok) return null;       // e.g. 404 from python's server: demo mode
+
+  const account = await response.json();
+  const me = MOCK_USERS.find((user) => user.id === CURRENT_USER_ID);
+  if (me) {
+    me.username = account.username;
+    if (account.region) me.region = account.region;
+    if (account.bio) me.bio = account.bio;
+    if (account.avatar) me.avatar = account.avatar;
+  }
+  return account;
+}
+
+// Any link or button with data-action="logout" logs you out
+function setupLogout() {
+  document.querySelectorAll('[data-action="logout"]').forEach((el) => {
+    el.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        await fetch("/api/logout", { method: "POST" });
+      } catch {
+        // server unreachable: still leave the page
+      }
+      location.href = "index.html";
+    });
+  });
 }

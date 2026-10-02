@@ -215,11 +215,15 @@ function setupDelete() {
 
 /* ---------- Start ---------- */
 
-fillAvatar($("nav-avatar"), me);
-setupAccountMenu();
-setupProfileForm();
-setupEmailForm();
-setupPasswordForm();
-setupPrivacyForm();
-setupSteam();
-setupDelete();
+/* ---------- Start ---------- */
+
+loadAccount().then(() => {
+  fillAvatar($("nav-avatar"), me);
+  setupAccountMenu();
+  setupProfileForm();
+  setupEmailForm();
+  setupPasswordForm();
+  setupPrivacyForm();
+  setupSteam();
+  setupDelete();
+});

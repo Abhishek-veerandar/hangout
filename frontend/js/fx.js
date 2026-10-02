@@ -76,6 +76,17 @@
     success: { wave: "square",   notes: [[660, 0.07], [880, 0.07], [1320, 0.12]] },
     error:   { wave: "sawtooth", notes: [[180, 0.09], [140, 0.14]] },
     unlock:  { wave: "square",   notes: [[523, 0.08], [659, 0.08], [784, 0.08], [1047, 0.22]] },
+
+    // Hangout Quest (game.js)
+    jump:    { wave: "square",   notes: [[440, 0.05], [660, 0.07]] },
+    coin:    { wave: "square",   notes: [[988, 0.05], [1319, 0.12]] },
+    slash:   { wave: "sawtooth", notes: [[600, 0.03], [300, 0.05]] },
+    hit:     { wave: "square",   notes: [[330, 0.05], [220, 0.06]] },
+    stomp:   { wave: "square",   notes: [[220, 0.05], [110, 0.10]] },
+    bump:    { wave: "square",   notes: [[150, 0.06]] },
+    hurt:    { wave: "sawtooth", notes: [[300, 0.08], [200, 0.12]] },
+    clear:   { wave: "square",   notes: [[523, 0.10], [659, 0.10], [784, 0.10], [1047, 0.30]] },
+    over:    { wave: "triangle", notes: [[392, 0.15], [330, 0.15], [262, 0.35]] },
   };
 
   function playSound(name) {

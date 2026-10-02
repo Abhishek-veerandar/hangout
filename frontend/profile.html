@@ -33,7 +33,19 @@
       <a href="index.html" class="logo">HANGOUT<span class="logo__dot">.</span></a>
       <nav class="site-nav">
         <a href="home.html" class="nav-link">Home</a>
-        <a href="profile.html" class="nav-avatar" id="nav-avatar" aria-label="Your profile"></a>
+
+        <!-- Account menu: same as on home and settings -->
+        <div class="account">
+          <button type="button" class="account__button" id="account-button"
+            aria-label="Account menu" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu">
+            <span class="nav-avatar" id="nav-avatar"></span>▼
+          </button>
+          <ul class="account__menu" id="account-menu" hidden>
+            <li><a href="profile.html">Your profile</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li><a href="index.html" data-action="logout">Log out</a></li>
+          </ul>
+        </div>
       </nav>
     </header>
 
@@ -124,11 +136,11 @@
       </div>
 
       <!-- ===== Shown when ?user= doesn't match anyone ===== -->
-      <div data-hero="guard"></div>
       <div class="not-found" id="not-found" hidden>
         <p class="not-found__code">&gt; error 404</p>
         <h1 class="not-found__title">Player not found</h1>
         <p class="not-found__text">No one called "<span id="not-found-name"></span>" plays here yet.</p>
+        <div data-hero="guard"></div>
         <a href="profile.html" class="btn btn--primary">Back to your profile</a>
       </div>
     </main>

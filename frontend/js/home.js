@@ -376,16 +376,21 @@ function setupFilters() {
 
 /* ---------- Start ---------- */
 
-fillAvatar($("nav-avatar"), me);
-renderIntro();
-renderRequests();
-renderOnline();
-renderRecommendations();
-loadRecommendations(); // async fetch() to backend recommender
+/* ---------- Start ---------- */
+// Wait to find out who's logged in, then draw the page with their name
 
-setupAccountMenu();
-setupRequestsToggle();
-setupAddFriend();
-setupUpload();via 
-setupSync();
-setupFilters();
+loadAccount().then(() => {
+  fillAvatar($("nav-avatar"), me);
+  renderIntro();
+  renderRequests();
+  renderOnline();
+  renderRecommendations();
+  loadRecommendations(); // async fetch() to backend recommender
+
+  setupAccountMenu();
+  setupRequestsToggle();
+  setupAddFriend();
+  setupUpload();
+  setupSync();
+  setupFilters();
+});

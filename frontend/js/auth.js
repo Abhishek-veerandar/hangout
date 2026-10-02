@@ -89,37 +89,54 @@ function validateField(input) {
   return message === "";
 }
 
-function setupForm(form, successMessage , redirectTo) {
+// Sends JSON to the backend. Throws the server's error message if it says no.
+async function postJSON(url, data) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    // Our own errors have a text "detail"; FastAPI's validation errors have a list
+    throw new Error(typeof body.detail === "string" ? body.detail : "Something went wrong. Try again.");
+  }
+  return body;
+}
+
+function setupForm(form, send, successMessage, redirectTo) {
   const inputs = [...form.querySelectorAll("[data-rule]")];
   const status = form.querySelector(".form-status");
+  const submit = form.querySelector('button[type="submit"]');
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault(); // stop the page reload
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
     status.textContent = "";
 
-    // Check every field (not just until the first error) so all messages show
     const results = inputs.map(validateField);
     const firstInvalid = inputs.find((input, i) => !results[i]);
-
     if (firstInvalid) {
       firstInvalid.focus();
       return;
     }
 
-    // Later: send the data to the backend with fetch() here
-    status.textContent = successMessage;
-    if (redirectTo) {
+    submit.disabled = true; // stops double-clicks creating two requests
+    try {
+      await send(form);
+      status.textContent = successMessage;
       setTimeout(() => { location.href = redirectTo; }, 800);
+    } catch (error) {
+      status.textContent = error.message; // e.g. "That username is taken."
+      submit.disabled = false;
     }
-});
-  // Once a field shows an error, re-check it while typing so it clears as soon as it's fixed
+  });
+
   inputs.forEach((input) => {
     input.addEventListener("input", () => {
       if (input.getAttribute("aria-invalid") === "true") validateField(input);
     });
   });
 
-  // Buttons that aren't wired up yet (Steam, Discord, forgot password)
   form.querySelectorAll("[data-message]").forEach((button) => {
     button.addEventListener("click", () => {
       status.textContent = button.dataset.message;
@@ -129,11 +146,24 @@ function setupForm(form, successMessage , redirectTo) {
 
 setupForm(
   document.querySelector("#signup-form"),
+  async (form) => {
+    const username = form.elements.username.value.trim();
+    const password = form.elements.password.value;
+    await postJSON("/api/signup", { username, email: form.elements.email.value.trim(), password });
+    // /api/signup doesn't start a session, so log in straight after
+    await postJSON("/api/login", { username, password });
+  },
   "Account created! Next: connect Steam…",
   "connect-steam.html"
 );
+
 setupForm(
   document.querySelector("#signin-form"),
+  // The backend's login accepts a username OR an email in the "username" field
+  (form) => postJSON("/api/login", {
+    username: form.elements.email.value.trim(),
+    password: form.elements.password.value,
+  }),
   "Signed in! Taking you home…",
   "home.html"
 );
