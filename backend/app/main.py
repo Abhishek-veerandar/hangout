@@ -1,5 +1,17 @@
 from pathlib import Path
 
+import sqlite3
+
+from fastapi import FastAPI, HTTPException
+
+from app.auth import hash_password, signup_error
+from app.db import get_connection, init_db
+
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
+
+from app.auth import (SESSION_DAYS, create_session, delete_session, hash_password,
+                      signup_error, user_for_session, verify_password)
+
 import numpy as np
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -87,6 +99,118 @@ def explain_match(me, other):
         return f"Also plays from {other.region}."
     return "Similar play style."
 
+
+# ---------- Accounts ----------
+
+class SignupRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+@app.post("/api/signup", status_code=201)
+def signup(body: SignupRequest):
+    username = body.username.strip()
+    email = body.email.strip().lower()
+
+    error = signup_error(username, email, body.password)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+
+    conn = get_connection()
+    try:
+        # The ? placeholders let SQLite insert the values safely.
+        # NEVER build SQL with f-strings from user input (that's how SQL injection happens).
+        cursor = conn.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+            (username, email, hash_password(body.password)),
+        )
+        conn.commit()
+    except sqlite3.IntegrityError as e:
+        # UNIQUE rule broken: the name or email is already used
+        detail = "That username is taken." if "username" in str(e) else "An account with that email already exists."
+        raise HTTPException(status_code=409, detail=detail)
+    finally:
+        conn.close()
+
+    return {"id": cursor.lastrowid, "username": username}
+
+
+SESSION_COOKIE = "hangout_session"
+
+# Hashing a fake password when the username doesn't exist makes a failed login
+# take the same time either way, so nobody can learn which usernames exist by timing it.
+DUMMY_HASH = hash_password("not-a-real-password")
+
+
+class LoginRequest(BaseModel):
+    username: str      # username OR email
+    password: str
+
+
+@app.post("/api/login")
+def login(body: LoginRequest, response: Response):
+    name = body.username.strip()
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT id, username, password_hash FROM users WHERE username = ? OR email = ?",
+            (name, name.lower()),
+        ).fetchone()
+
+        if row is None:
+            verify_password(body.password, DUMMY_HASH)
+            raise HTTPException(status_code=401, detail="Wrong username or password.")
+        if not verify_password(body.password, row["password_hash"]):
+            raise HTTPException(status_code=401, detail="Wrong username or password.")
+
+        token = create_session(conn, row["id"])
+        conn.commit()
+    finally:
+        conn.close()
+
+    response.set_cookie(
+        SESSION_COOKIE, token,
+        max_age=SESSION_DAYS * 24 * 60 * 60,
+        httponly=True,     # JavaScript can't read it, so injected scripts can't steal it
+        samesite="lax",    # other websites can't make your browser send it with their forms
+        secure=False,      # True once the site runs on https
+    )
+    return {"id": row["id"], "username": row["username"]}
+
+
+def current_user(hangout_session: str | None = Cookie(default=None)):
+    """Any route that needs a logged-in user adds:  user = Depends(current_user)"""
+    conn = get_connection()
+    try:
+        user = user_for_session(conn, hangout_session)
+        conn.commit()      # saves the cleanup if an expired session was removed
+    finally:
+        conn.close()
+    if user is None:
+        raise HTTPException(status_code=401, detail="Not logged in.")
+    return user
+
+
+@app.get("/api/me")
+def me(user=Depends(current_user)):
+    return {
+        "id": user["id"], "username": user["username"], "email": user["email"],
+        "region": user["region"], "bio": user["bio"], "avatar": user["avatar"],
+    }
+
+
+@app.post("/api/logout")
+def logout(response: Response, hangout_session: str | None = Cookie(default=None)):
+    if hangout_session:
+        conn = get_connection()
+        try:
+            delete_session(conn, hangout_session)
+            conn.commit()
+        finally:
+            conn.close()
+    response.delete_cookie(SESSION_COOKIE)
+    return {"ok": True}
 
 # Must stay last: anything that isn't /api/... is served from frontend/.
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
