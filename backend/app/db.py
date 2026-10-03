@@ -33,6 +33,14 @@ CREATE TABLE IF NOT EXISTS email_tokens (
     email      TEXT    NOT NULL,
     expires_at TEXT    NOT NULL
 );
+CREATE TABLE IF NOT EXISTS friend_requests (
+    from_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    to_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status     TEXT    NOT NULL DEFAULT 'pending',   -- 'pending' or 'accepted'
+    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (from_id, to_id),                   -- one request per pair
+    CHECK (from_id != to_id)                         -- you can't befriend yourself
+);
 """
 
 

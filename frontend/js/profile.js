@@ -166,11 +166,43 @@ function setupActions(user) {
     }
   });
 
-  $("add-friend-btn").addEventListener("click", (event) => {
-    event.currentTarget.textContent = "Request sent";
-    event.currentTarget.disabled = true;
-    showStatus("Friend requests will be saved once the backend is connected.");
-  });
+  const addBtn = $("add-friend-btn");
+  const LABELS = { none: "Add friend", outgoing: "Request sent", incoming: "Accept request", friends: "Friends ✓" };
+
+  function showFriendButton() {
+    addBtn.textContent = LABELS[user.friendStatus] || "Add friend";
+    addBtn.disabled = user.friendStatus === "outgoing" || user.friendStatus === "friends";
+  }
+
+  if (user.dbId) {
+    // A real player
+    showFriendButton();
+    addBtn.addEventListener("click", async () => {
+      addBtn.disabled = true;
+      try {
+        if (user.friendStatus === "incoming") {
+          await apiJSON("POST", `/api/friends/requests/${user.dbId}/accept`);
+          user.friendStatus = "friends";
+        } else {
+          const result = await apiJSON("POST", "/api/friends/requests", { username: user.username });
+          user.friendStatus = result.status === "accepted" ? "friends" : "outgoing";
+        }
+        showStatus(user.friendStatus === "friends"
+          ? `You and ${user.username} are now friends.`
+          : `Request sent to ${user.username}.`);
+      } catch (error) {
+        showStatus(error.message);
+      }
+      showFriendButton();
+    });
+  } else {
+    // A mock player: the old demo behaviour
+    addBtn.addEventListener("click", () => {
+      addBtn.textContent = "Request sent";
+      addBtn.disabled = true;
+      showStatus("Mock players can't receive real requests.");
+    });
+  }
 
   $("message-btn").addEventListener("click", () => {
     showStatus("Chat is coming in a later phase.");
@@ -221,15 +253,36 @@ function showNotFound(name) {
 // async because we wait for loadAccount() first. It asks the server who is
 // logged in and copies your real username/region/bio/avatar onto the mock
 // current user. Logged out → it sends you to auth.html.
+/* ---------- Real profiles from the server ---------- */
+
+async function loadProfile(username) {
+  let response;
+  try {
+    response = await fetch(`/api/users/${encodeURIComponent(username)}`);
+  } catch {
+    return null;
+  }
+  if (!response.ok) return null;   // not a real player: maybe a mock one
+
+  const data = await response.json();
+  const user = realUser(data);
+  user.friendIds = data.friends.map((card) => realUser(card).id);
+  user.friendStatus = data.friendStatus;   // self | friends | outgoing | incoming | none
+  return user;
+} 
 
 /* ---------- Start ---------- */
 // profile.html              → your own profile
 // profile.html?user=rook_07 → someone else's profile
 
-loadAccount().then(() => {
+loadAccount().then(async (account) => {
   const currentUser = findUserById(CURRENT_USER_ID);
   const requestedName = new URLSearchParams(location.search).get("user");
-  const user = requestedName ? findUserByName(requestedName) : currentUser;
+
+  // Logged in: ask the server first (your own profile, or a real player's)
+  let user = account ? await loadProfile(requestedName || account.username) : null;
+  // Not a real player (or demo mode): fall back to the mock players
+  if (!user) user = requestedName ? findUserByName(requestedName) : currentUser;
 
   fillAvatar($("nav-avatar"), currentUser);
   setupAccountMenu();

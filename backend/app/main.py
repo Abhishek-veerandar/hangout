@@ -13,6 +13,8 @@ from app.auth import (SESSION_DAYS, create_email_token, create_session, delete_o
                       user_for_session, verify_password)
 from app.db import get_connection, init_db
 from app.recommender import load_model, player_features
+from app.friends import (accept_request, decline_request, find_user, friendship_status,
+                         list_friends, list_requests, send_request, user_card)
 
 # backend/app/main.py → up three levels is the repo root → frontend/
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
@@ -290,6 +292,98 @@ def delete_account(body: DeleteAccount, response: Response, user=Depends(current
         conn.close()
     response.delete_cookie(SESSION_COOKIE)
     return {"ok": True}
+
+# ---------- Friends ----------
+
+@app.get("/api/friends")
+def my_friends(user=Depends(current_user)):
+    """Your friends, plus pending requests both ways."""
+    conn = get_connection()
+    try:
+        friends = list_friends(conn, user["id"])
+        incoming, outgoing = list_requests(conn, user["id"])
+    finally:
+        conn.close()
+    return {
+        "friends": [user_card(row) for row in friends],
+        "incoming": [user_card(row) for row in incoming],
+        "outgoing": [user_card(row) for row in outgoing],
+    }
+
+
+class FriendRequestBody(BaseModel):
+    username: str
+
+
+@app.post("/api/friends/requests")
+def send_friend_request(body: FriendRequestBody, user=Depends(current_user)):
+    name = body.username.strip().lstrip("@")   # "@rook_07" works too
+    conn = get_connection()
+    try:
+        other = find_user(conn, name)
+        if other is None:
+            raise HTTPException(status_code=404, detail=f'No player called "{name}".')
+
+        status = friendship_status(conn, user["id"], other["id"])
+        if status == "self":
+            raise HTTPException(status_code=400, detail="That's you!")
+        if status == "friends":
+            raise HTTPException(status_code=409, detail=f"You're already friends with {other['username']}.")
+        if status == "outgoing":
+            raise HTTPException(status_code=409, detail=f"Request already sent to {other['username']}.")
+
+        if status == "incoming":
+            # They already asked you, so asking back means yes
+            accept_request(conn, user["id"], other["id"])
+            result = "accepted"
+        else:
+            send_request(conn, user["id"], other["id"])
+            result = "sent"
+        conn.commit()
+    finally:
+        conn.close()
+    return {"status": result, "user": user_card(other)}
+
+
+@app.post("/api/friends/requests/{from_id}/accept")
+def accept_friend_request(from_id: int, user=Depends(current_user)):
+    conn = get_connection()
+    try:
+        ok = accept_request(conn, user["id"], from_id)
+        conn.commit()
+    finally:
+        conn.close()
+    if not ok:
+        raise HTTPException(status_code=404, detail="That request doesn't exist anymore.")
+    return {"ok": True}
+
+
+@app.post("/api/friends/requests/{from_id}/decline")
+def decline_friend_request(from_id: int, user=Depends(current_user)):
+    conn = get_connection()
+    try:
+        ok = decline_request(conn, user["id"], from_id)
+        conn.commit()
+    finally:
+        conn.close()
+    if not ok:
+        raise HTTPException(status_code=404, detail="That request doesn't exist anymore.")
+    return {"ok": True}
+
+
+@app.get("/api/users/{username}")
+def public_profile(username: str, user=Depends(current_user)):
+    """Another player's public profile: their card, their friends, and where you two stand."""
+    conn = get_connection()
+    try:
+        other = find_user(conn, username)
+        if other is None:
+            raise HTTPException(status_code=404, detail="Player not found.")
+        friends = list_friends(conn, other["id"])
+        status = friendship_status(conn, user["id"], other["id"])
+    finally:
+        conn.close()
+    return {**user_card(other), "friends": [user_card(row) for row in friends], "friendStatus": status}
 
 @app.get("/api/verify-email")
 def verify_email(token: str = ""):

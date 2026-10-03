@@ -20,14 +20,15 @@ function showStatus(message) {
 // Later, every change here also becomes a fetch() call to the backend.
 
 const me = byId(CURRENT_USER_ID);
+let account = null; // the logged-in account, or null in demo mode
 
 const state = {
   incoming: [...MOCK_FRIEND_REQUESTS], // ids of people who asked to be my friend
   outgoing: new Set(),                 // ids I've sent requests to
   dismissed: new Set(),                // recommendations I marked "not interested"
   filter: "all",
-  recs:[],
-  recsLoading:true,
+  recs: [],
+  recsLoading: true,
 };
 
 /* ---------- Intro ---------- */
@@ -78,8 +79,8 @@ function renderRequests() {
 // Later, the backend decides these and remembers which ones you already got.
 
 const FRIEND_ACHIEVEMENTS = [
-  { count: 1,  title: "Player 2 has joined",    text: "Your first friend on Hangout." },
-  { count: 5,  title: "Squad goals: 5 friends", text: "That's a full party." },
+  { count: 1, title: "Player 2 has joined", text: "Your first friend on Hangout." },
+  { count: 5, title: "Squad goals: 5 friends", text: "That's a full party." },
   { count: 10, title: "Raid ready: 10 friends", text: "Time to plan something big." },
 ];
 
@@ -88,7 +89,17 @@ function checkFriendAchievements() {
   if (unlocked) showToast(unlocked);
 }
 
-function answerRequest(person, accepted) {
+async function answerRequest(person, accepted) {
+  // Real players: tell the server first. Mock players stay local, as before.
+  if (account && person.dbId) {
+    try {
+      await apiJSON("POST", `/api/friends/requests/${person.dbId}/${accepted ? "accept" : "decline"}`);
+    } catch (error) {
+      showStatus(error.message);
+      return;
+    }
+  }
+
   state.incoming = state.incoming.filter((id) => id !== person.id);
 
   if (accepted) {
@@ -125,11 +136,11 @@ function setupRequestsToggle() {
 
 // Order and wording for each Steam status. "offline" and "hidden" are left out on purpose.
 const STATUS_INFO = {
-  "in-game":         { order: 0, label: (steam) => `In-game · ${steam.game}` },
+  "in-game": { order: 0, label: (steam) => `In-game · ${steam.game}` },
   "looking-to-play": { order: 1, label: () => "Looking to play" },
-  online:            { order: 2, label: () => "Online" },
-  busy:              { order: 3, label: () => "Busy" },
-  away:              { order: 4, label: () => "Away" },
+  online: { order: 2, label: () => "Online" },
+  busy: { order: 3, label: () => "Busy" },
+  away: { order: 4, label: () => "Away" },
 };
 
 function renderOnline() {
@@ -162,7 +173,7 @@ function renderOnline() {
 
     list.append(item);
   });
- $("online-empty").hidden = online.length > 0;
+  $("online-empty").hidden = online.length > 0;
 }
 
 /* ---------- Add friend by username ---------- */
@@ -178,15 +189,51 @@ function setupAddFriend() {
     input.setAttribute("aria-invalid", isError ? "true" : "false");
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const name = input.value.trim().replace(/^@/, ""); // allow "@rook_07" too
-    const person = name ? byName(name) : null;
 
     if (!name) {
       say("Type a username first.", true);
-    } else if (!person) {
+      return;
+    }
+
+    // Logged in for real: look the name up in the database
+    if (account) {
+      const submit = form.querySelector('button[type="submit"]');
+      submit.disabled = true; // stops double-clicks sending two requests
+      try {
+        const result = await apiJSON("POST", "/api/friends/requests", { username: name });
+        const person = realUser(result.user);
+
+        if (result.status === "accepted") {
+          // They had already asked you, so asking back means yes
+          me.friendIds.push(person.id);
+          person.friendIds.push(me.id);
+          state.incoming = state.incoming.filter((id) => id !== person.id);
+          say(`You and ${person.username} are now friends.`, false);
+          renderRequests();
+          renderOnline();
+          checkFriendAchievements();
+        } else {
+          state.outgoing.add(person.id);
+          say(`Request sent to ${person.username}.`, false);
+        }
+        input.value = "";
+      } catch (error) {
+        // "No player called ...", "That's you!", "Request already sent ..."
+        say(error.message, true);
+      } finally {
+        submit.disabled = false;
+      }
+      return;
+    }
+
+    // Demo mode (no backend): search the mock players, as before
+    const person = byName(name);
+
+    if (!person) {
       say(`No player called "${name}".`, true);
     } else if (person.id === me.id) {
       say("That's you!", true);
@@ -379,7 +426,17 @@ function setupFilters() {
 /* ---------- Start ---------- */
 // Wait to find out who's logged in, then draw the page with their name
 
-loadAccount().then(() => {
+
+loadAccount().then(async (result) => {
+  account = result;
+  if (account) {
+    const lists = await loadFriends();
+    if (lists) {
+      state.incoming = lists.incoming;          // real requests replace the mock ones
+      state.outgoing = new Set(lists.outgoing);
+    }
+  }
+
   fillAvatar($("nav-avatar"), me);
   renderIntro();
   renderRequests();

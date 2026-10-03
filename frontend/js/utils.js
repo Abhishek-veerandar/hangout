@@ -14,6 +14,9 @@ function initials(username) {
 // The 6 characters in img/avatars/. The file name is the id.
 const AVATARS = ["smith", "archer", "assassin", "knight", "mage", "monk"];
 
+// Your user id in the database (null in demo mode). Set by loadAccount().
+let MY_DB_ID = null;
+
 function avatarSrc(id) {
   return `img/avatars/${id}.png`;
 }
@@ -125,10 +128,12 @@ async function loadAccount() {
   if (!response.ok) return null;       // e.g. 404 from python's server: demo mode
 
   const account = await response.json();
+    MY_DB_ID = account.id;
   const me = MOCK_USERS.find((user) => user.id === CURRENT_USER_ID);
     if (me) {
     // A real account starts fresh: nothing of pixel_ronin's carries over
     me.username = account.username;
+    me.dbId = account.id;
     me.region = account.region || "";
     me.bio = account.bio || "";
     me.avatar = account.avatar || null;
@@ -232,4 +237,44 @@ function showEmailBanner(account) {
 
   banner.append(text, resend);
   document.querySelector(".site-header").after(banner);
+}
+
+/* ---------- Real players from the server ---------- */
+// Turns a player card from the server into the same shape as the mock users,
+// so every page can draw real and mock players the same way.
+function realUser(card) {
+  const id = card.id === MY_DB_ID ? CURRENT_USER_ID : `db_${card.id}`;
+  let user = MOCK_USERS.find((u) => u.id === id);
+  if (!user) {
+    user = {
+      id, avatarUrl: null, games: [], friendIds: [], screenshots: [],
+      steam: { state: "offline", game: null },   // real status comes with Steam
+    };
+    MOCK_USERS.push(user);
+  }
+  Object.assign(user, {
+    dbId: card.id,
+    username: card.username,
+    region: card.region || "",
+    bio: card.bio || "",
+    avatar: card.avatar || null,
+    joinedAt: card.joinedAt,
+  });
+  return user;
+}
+
+// Your friends and pending requests. Returns { incoming, outgoing } as ids,
+// or null if the server can't be reached.
+async function loadFriends() {
+  try {
+    const data = await apiJSON("GET", "/api/friends");
+    const me = MOCK_USERS.find((user) => user.id === CURRENT_USER_ID);
+    me.friendIds = data.friends.map((card) => realUser(card).id);
+    return {
+      incoming: data.incoming.map((card) => realUser(card).id),
+      outgoing: data.outgoing.map((card) => realUser(card).id),
+    };
+  } catch {
+    return null;
+  }
 }
