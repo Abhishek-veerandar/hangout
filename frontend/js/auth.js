@@ -52,6 +52,9 @@ requestAnimationFrame(() => {
 // Each input has data-rule="…" that picks one of these.
 // A rule returns "" when the value is fine, or an error message.
 const rules = {
+    login(value) {
+    return value === "" ? "Enter your username or email" : "";
+  },
   username(value) {
     if (value === "") return "Choose a username";
     return /^[A-Za-z0-9_]{3,16}$/.test(value)
@@ -160,8 +163,8 @@ setupForm(
 setupForm(
   document.querySelector("#signin-form"),
   // The backend's login accepts a username OR an email in the "username" field
-  (form) => postJSON("/api/login", {
-    username: form.elements.email.value.trim(),
+    (form) => postJSON("/api/login", {
+    username: form.elements.login.value.trim(),
     password: form.elements.password.value,
   }),
   "Signed in! Taking you home…",

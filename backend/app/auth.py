@@ -47,6 +47,24 @@ def signup_error(username, email, password):
     if len(password) > 128:
         return "Password must be at most 128 characters."
     return None
+# ---------- Profile rules ----------
+# Must match the options in settings.html and AVATARS in utils.js
+REGIONS = {"", "India", "Singapore", "UAE", "Japan", "United Kingdom", "United States", "Other"}
+AVATARS = {"smith", "archer", "assassin", "knight", "mage", "monk"}
+BIO_MAX = 80   # same as maxlength on the bio input
+
+
+def profile_error(username, bio, region, avatar):
+    """Checked again on the server because anyone can skip the browser."""
+    if not USERNAME_RE.match(username):
+        return "Username must be 3 to 16 letters, numbers or underscores."
+    if len(bio) > BIO_MAX:
+        return f"Bio must be at most {BIO_MAX} characters."
+    if region not in REGIONS:
+        return "Pick a region from the list."
+    if avatar is not None and avatar not in AVATARS:
+        return "That character doesn't exist."
+    return None
 
 # ---------- Login sessions ----------
 
@@ -76,7 +94,7 @@ def user_for_session(conn, token):
         return None
     row = conn.execute(
         """SELECT users.id, users.username, users.email, users.region, users.bio,
-                  users.avatar, sessions.expires_at
+                  users.avatar, users.email_verified, sessions.expires_at
            FROM sessions JOIN users ON users.id = sessions.user_id
            WHERE sessions.token = ?""",
         (_token_hash(token),),
@@ -91,3 +109,45 @@ def user_for_session(conn, token):
 
 def delete_session(conn, token):
     conn.execute("DELETE FROM sessions WHERE token = ?", (_token_hash(token),))
+
+
+# ---------- Email verification ----------
+
+VERIFY_HOURS = 24
+
+
+def create_email_token(conn, user_id, email):
+    """A one-time token for the link we email. Stored hashed, like session tokens."""
+    conn.execute("DELETE FROM email_tokens WHERE user_id = ?", (user_id,))  # old links stop working
+    token = secrets.token_urlsafe(32)
+    expires = datetime.now(timezone.utc) + timedelta(hours=VERIFY_HOURS)
+    conn.execute(
+        "INSERT INTO email_tokens (token, user_id, email, expires_at) VALUES (?, ?, ?, ?)",
+        (_token_hash(token), user_id, email, expires.isoformat()),
+    )
+    return token
+
+
+def use_email_token(conn, token):
+    """Marks the email verified. Returns True if the token was valid."""
+    row = conn.execute(
+        "SELECT user_id, email, expires_at FROM email_tokens WHERE token = ?",
+        (_token_hash(token),),
+    ).fetchone()
+    if row is None:
+        return False
+    conn.execute("DELETE FROM email_tokens WHERE token = ?", (_token_hash(token),))  # one use only
+    if datetime.fromisoformat(row["expires_at"]) < datetime.now(timezone.utc):
+        return False
+    # Only verify if it's still the same address (it may have changed since)
+    conn.execute(
+        "UPDATE users SET email_verified = 1 WHERE id = ? AND email = ?",
+        (row["user_id"], row["email"]),
+    )
+    return True
+
+
+def send_verification_email(email, link):
+    """For now the 'email' is printed in the uvicorn terminal.
+    Later: send it for real here (SMTP or an email service), and nothing else changes."""
+    print(f"\n=== Verify email for {email} ===\n{link}\n", flush=True)

@@ -36,7 +36,7 @@ function renderProfile(user, isOwn) {
 
   fillAvatar($("profile-avatar"), user);
   $("profile-name").textContent = user.username;
-  const metaParts = [user.region];
+  const metaParts = user.region ? [user.region] : [];
   if (user.avatar) metaParts.push(avatarName(user.avatar));
   metaParts.push(`Joined ${dateFormat.format(new Date(user.joinedAt))}`);
   $("profile-meta").textContent = metaParts.join(" · ");

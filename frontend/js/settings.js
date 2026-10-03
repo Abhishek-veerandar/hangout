@@ -14,7 +14,7 @@ const privacy = {
   showGames: true,
   requestsFrom: "everyone",
 };
-
+let account = null; // filled in by loadAccount()
 const USERNAME_RULE = /^[A-Za-z0-9_]{3,16}$/;
 const EMAIL_RULE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -69,10 +69,12 @@ function setupProfileForm() {
     fillAvatar($("nav-avatar"), { ...me, avatar: event.target.value });
   });
 
-  form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    setFormStatus(form, "");
 
     const name = username.value.trim();
+    // Mock players are still on screen, so don't let you take one of their names
     const taken = MOCK_USERS.some(
       (user) => user.id !== me.id && user.username.toLowerCase() === name.toLowerCase()
     );
@@ -86,19 +88,42 @@ function setupProfileForm() {
       return;
     }
 
-    me.username = name;
-    me.bio = bio.value.trim();
-    me.region = region.value;
-        me.avatar = form.elements.avatar.value || null;
+    const changes = {
+      username: name,
+      bio: bio.value.trim(),
+      region: region.value,
+      avatar: form.elements.avatar.value || null,
+    };
+
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
     try {
-      if (me.avatar) localStorage.setItem("hangout-avatar", me.avatar);
-    } catch {
-      // not remembered, but still changed for this page
+      if (account) {
+        await apiJSON("PATCH", "/api/me", changes);   // saved in the database
+      } else {
+        // Demo mode: no backend, so remember the character in this browser only
+        try {
+          if (changes.avatar) localStorage.setItem("hangout-avatar", changes.avatar);
+        } catch {
+          // storage blocked: still changed for this page
+        }
+      }
+    } catch (error) {
+      if (error.status === 409) {
+        setError(username, error.message);   // "That username is taken."
+        username.focus();
+      } else {
+        setFormStatus(form, error.message);
+      }
+      return;
+    } finally {
+      submit.disabled = false;
     }
 
+    Object.assign(me, changes);
     fillAvatar($("nav-avatar"), me);
     $("delete-username").textContent = me.username;
-    setFormStatus(form, "Saved. (Resets on reload until the backend is connected.)");
+    setFormStatus(form, account ? "Saved." : "Saved in this browser only (demo mode).");
   });
 }
 
@@ -217,7 +242,8 @@ function setupDelete() {
 
 /* ---------- Start ---------- */
 
-loadAccount().then(() => {
+loadAccount().then((result) => {
+  account = result;
   fillAvatar($("nav-avatar"), me);
   setupAccountMenu();
   setupProfileForm();

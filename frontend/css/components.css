@@ -492,3 +492,35 @@
   from { background-position: 0% 0; }
   to   { background-position: 100% 0; }
 }
+
+/* ===== "Verify your email" banner ===== */
+.verify-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 10px 12px 10px 16px;
+  border: var(--border);
+  background: var(--yellow);
+  color: var(--on-yellow);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.verify-banner__text {
+  flex-grow: 1;
+  font-weight: 700;
+}
+
+.verify-banner__btn {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  background: var(--on-yellow);
+  color: var(--yellow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.verify-banner__btn:disabled { opacity: 0.6; cursor: default; }

@@ -128,10 +128,11 @@ async function loadAccount() {
   const me = MOCK_USERS.find((user) => user.id === CURRENT_USER_ID);
   if (me) {
     me.username = account.username;
-    if (account.region) me.region = account.region;
-    if (account.bio) me.bio = account.bio;
+    me.region = account.region;
+    me.bio = account.bio;
     if (account.avatar) me.avatar = account.avatar;
   }
+  showEmailBanner(account);
   return account;
 }
 
@@ -148,4 +149,75 @@ function setupLogout() {
       location.href = "index.html";
     });
   });
+}
+
+/* ---------- Talking to the backend ---------- */
+// Sends JSON, returns the reply. Throws an Error with the server's message
+// and error.status (e.g. 409) if the server says no.
+async function apiJSON(method, url, data) {
+  const response = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (response.status === 401) {
+    location.href = "auth.html";   // session expired: log in again
+    return new Promise(() => {});
+  }
+
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(typeof body.detail === "string" ? body.detail : "Something went wrong. Try again.");
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+/* ---------- Email verification banner ---------- */
+
+function showEmailBanner(account) {
+  // Coming back from the link in the email: ?verified=1 or ?verified=expired
+  const params = new URLSearchParams(location.search);
+  const result = params.get("verified");
+  if (result) {
+    params.delete("verified");
+    const query = params.toString();
+    history.replaceState(null, "", location.pathname + (query ? `?${query}` : ""));
+    if (result === "1" && window.showToast) {
+      showToast({ title: "Email verified", text: "You're all set.", icon: "✓" });
+    }
+  }
+
+  if (account.emailVerified) return;
+
+  const banner = document.createElement("div");
+  banner.className = "verify-banner";
+  banner.setAttribute("role", "status");
+
+  const text = document.createElement("p");
+  text.className = "verify-banner__text";
+  text.textContent = result === "expired"
+    ? "That link expired or was already used. Send a new one?"
+    : `Verify your email: we sent a link to ${account.email}.`;
+
+  const resend = document.createElement("button");
+  resend.type = "button";
+  resend.className = "verify-banner__btn";
+  resend.textContent = "Resend link";
+  resend.addEventListener("click", async () => {
+    resend.disabled = true;
+    try {
+      const response = await fetch("/api/verify-email/resend", { method: "POST" });
+      if (!response.ok) throw new Error();
+      text.textContent = `New link sent to ${account.email}. It works for 24 hours.`;
+    } catch {
+      text.textContent = "Couldn't send the link. Try again in a moment.";
+      resend.disabled = false;
+    }
+  });
+
+  banner.append(text, resend);
+  document.querySelector(".site-header").after(banner);
 }

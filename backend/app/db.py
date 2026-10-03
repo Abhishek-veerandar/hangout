@@ -26,6 +26,13 @@ CREATE TABLE IF NOT EXISTS sessions (
     created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TEXT    NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS email_tokens (
+    token      TEXT    PRIMARY KEY,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    email      TEXT    NOT NULL,
+    expires_at TEXT    NOT NULL
+);
 """
 
 
@@ -41,6 +48,12 @@ def init_db():
     conn = get_connection()
     try:
         conn.executescript(SCHEMA)
+
+        # Add columns that were introduced after the first version of the table
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(users)")}
+        if "email_verified" not in columns:
+            conn.execute("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0")
+
         conn.commit()
     finally:
         conn.close()

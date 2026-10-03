@@ -2,12 +2,14 @@ import sqlite3
 from pathlib import Path
 
 import numpy as np
-from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.auth import (SESSION_DAYS, create_session, delete_session, hash_password,
-                      signup_error, user_for_session, verify_password)
+from app.auth import (SESSION_DAYS, create_email_token, create_session, delete_session,
+                      hash_password, send_verification_email, signup_error, use_email_token,
+                      user_for_session, verify_password)
 from app.db import get_connection, init_db
 from app.recommender import load_model, player_features
 
@@ -100,7 +102,7 @@ class SignupRequest(BaseModel):
 
 
 @app.post("/api/signup", status_code=201)
-def signup(body: SignupRequest):
+def signup(body: SignupRequest, request: Request):
     username = body.username.strip()
     email = body.email.strip().lower()
 
@@ -116,6 +118,8 @@ def signup(body: SignupRequest):
             "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
             (username, email, hash_password(body.password)),
         )
+        user_id = cursor.lastrowid
+        token = create_email_token(conn, user_id, email)
         conn.commit()
     except sqlite3.IntegrityError as e:
         # UNIQUE rule broken: the name or email is already used
@@ -124,7 +128,8 @@ def signup(body: SignupRequest):
     finally:
         conn.close()
 
-    return {"id": cursor.lastrowid, "username": username}
+    send_verification_email(email, f"{request.base_url}api/verify-email?token={token}")
+    return {"id": user_id, "username": username}
 
 
 SESSION_COOKIE = "hangout_session"
@@ -188,8 +193,41 @@ def me(user=Depends(current_user)):
     return {
         "id": user["id"], "username": user["username"], "email": user["email"],
         "region": user["region"], "bio": user["bio"], "avatar": user["avatar"],
+        "emailVerified": bool(user["email_verified"]),
     }
+class ProfileUpdate(BaseModel):
+    username: str
+    bio: str = ""
+    region: str = ""
+    avatar: str | None = None
 
+
+@app.patch("/api/me")
+def update_me(body: ProfileUpdate, user=Depends(current_user)):
+    username = body.username.strip()
+    bio = body.bio.strip()
+
+    error = profile_error(username, bio, body.region, body.avatar)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+
+    conn = get_connection()
+    try:
+        conn.execute(
+            "UPDATE users SET username = ?, bio = ?, region = ?, avatar = ? WHERE id = ?",
+            (username, bio, body.region, body.avatar, user["id"]),
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        # The UNIQUE rule on username: someone else already has it
+        raise HTTPException(status_code=409, detail="That username is taken.")
+    finally:
+        conn.close()
+
+    return {
+        "id": user["id"], "username": username, "email": user["email"],
+        "region": body.region, "bio": bio, "avatar": body.avatar,
+    }
 
 @app.post("/api/logout")
 def logout(response: Response, hangout_session: str | None = Cookie(default=None)):
@@ -201,6 +239,31 @@ def logout(response: Response, hangout_session: str | None = Cookie(default=None
         finally:
             conn.close()
     response.delete_cookie(SESSION_COOKIE)
+    return {"ok": True}
+
+@app.get("/api/verify-email")
+def verify_email(token: str = ""):
+    """The link in the email lands here, then sends you back to the site."""
+    conn = get_connection()
+    try:
+        ok = use_email_token(conn, token) if token else False
+        conn.commit()
+    finally:
+        conn.close()
+    return RedirectResponse(f"/home.html?verified={'1' if ok else 'expired'}")
+
+
+@app.post("/api/verify-email/resend")
+def resend_verification(request: Request, user=Depends(current_user)):
+    if user["email_verified"]:
+        return {"ok": True, "alreadyVerified": True}
+    conn = get_connection()
+    try:
+        token = create_email_token(conn, user["id"], user["email"])
+        conn.commit()
+    finally:
+        conn.close()
+    send_verification_email(user["email"], f"{request.base_url}api/verify-email?token={token}")
     return {"ok": True}
 
 # Must stay last: anything that isn't /api/... is served from frontend/.
