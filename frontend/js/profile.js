@@ -267,7 +267,8 @@ async function loadProfile(username) {
   const data = await response.json();
   const user = realUser(data);
   user.friendIds = data.friends.map((card) => realUser(card).id);
-  user.friendStatus = data.friendStatus;   // self | friends | outgoing | incoming | none
+  user.friendStatus = data.friendStatus;
+  user.games = data.games || [];   // self | friends | outgoing | incoming | none
   return user;
 } 
 

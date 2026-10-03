@@ -195,12 +195,13 @@
               <div class="steam-account__who">
                 <strong id="steam-name"></strong>
                 <span id="steam-id"></span>
-                <span>Last synced 2h ago</span>
+                <span id="steam-synced"></span>
               </div>
             </div>
             <p class="panel__text">Your game details must be public on Steam for your playtime to show up
               (Steam → Edit Profile → Privacy Settings → Game details: Public).</p>
             <div class="panel__actions">
+              <a href="connect-steam.html" class="btn btn--primary btn--sm" id="steam-connect" hidden>Connect Steam</a>
               <button type="button" class="btn btn--secondary btn--sm" id="steam-sync">Sync now</button>
               <button type="button" class="btn btn--secondary btn--sm" id="steam-disconnect">Disconnect</button>
               <p class="panel__status" id="steam-status" role="status"></p>

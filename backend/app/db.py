@@ -41,6 +41,20 @@ CREATE TABLE IF NOT EXISTS friend_requests (
     PRIMARY KEY (from_id, to_id),                   -- one request per pair
     CHECK (from_id != to_id)                         -- you can't befriend yourself
 );
+CREATE TABLE IF NOT EXISTS user_games (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    app_id  INTEGER NOT NULL,             -- Steam's id for the game
+    name    TEXT    NOT NULL,
+    genre   TEXT    NOT NULL DEFAULT '',
+    minutes INTEGER NOT NULL DEFAULT 0,   -- Steam's playtime_forever
+    PRIMARY KEY (user_id, app_id)
+);
+
+-- Store genres we already looked up, shared by everyone, so each game is asked about once
+CREATE TABLE IF NOT EXISTS steam_app_genres (
+    app_id INTEGER PRIMARY KEY,
+    genre  TEXT    NOT NULL
+);
 """
 
 
@@ -61,7 +75,11 @@ def init_db():
         columns = {row["name"] for row in conn.execute("PRAGMA table_info(users)")}
         if "email_verified" not in columns:
             conn.execute("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0")
-
+        for column in ("steam_id", "steam_name", "steam_avatar", "steam_synced_at"):
+            if column not in columns:
+                conn.execute(f"ALTER TABLE users ADD COLUMN {column} TEXT")
+        # One Steam account can only be linked to one Hangout account
+        conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS users_steam_id ON users(steam_id)")
         conn.commit()
     finally:
         conn.close()

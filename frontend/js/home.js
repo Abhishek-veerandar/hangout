@@ -276,8 +276,42 @@ function setupUpload() {
 }
 
 function setupSync() {
-  $("sync-btn").addEventListener("click", () => {
-    showStatus("Syncing with Steam will work once the backend is connected.");
+  const button = $("sync-btn");
+  const text = $("steam-sync-text");
+
+  if (account) {
+    if (!account.steam) {
+      text.textContent = "Steam · not connected";
+      button.textContent = "Connect";
+    } else if (account.steam.syncedAt) {
+      const when = new Date(account.steam.syncedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      text.textContent = `Steam · synced ${when}`;
+    }
+  }
+
+  button.addEventListener("click", async () => {
+    if (!account) {
+      showStatus("Demo mode: no backend, so nothing was synced.");
+      return;
+    }
+    if (!account.steam) {
+      location.href = "connect-steam.html";
+      return;
+    }
+    button.disabled = true;
+    showStatus("Syncing with Steam…");
+    try {
+      const result = await apiJSON("POST", "/api/steam/sync");
+      if (result.private) {
+        showStatus("Your game details are private on Steam, so no games were imported.");
+      } else {
+        location.reload(); // redraw everything with your new games
+      }
+    } catch (error) {
+      showStatus(error.message);
+    } finally {
+      button.disabled = false;
+    }
   });
 }
 /* ---------- Asking the model for matches ---------- */

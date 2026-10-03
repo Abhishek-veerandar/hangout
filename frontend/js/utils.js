@@ -139,7 +139,7 @@ async function loadAccount() {
     me.avatar = account.avatar || null;
     me.avatarUrl = null;
     me.joinedAt = account.joinedAt;
-    me.games = [];        // filled in once Steam is connected for real
+    me.games = account.games || [];        // filled in once Steam is connected for real
     me.friendIds = [];    // filled in once friends are saved in the backend
     me.screenshots = [];
     me.steam = { state: "offline", game: null };

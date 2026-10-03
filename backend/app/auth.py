@@ -93,8 +93,10 @@ def user_for_session(conn, token):
     if not token:
         return None
     row = conn.execute(
-        """SELECT users.id, users.username, users.email, users.region, users.bio,
-                  users.avatar, users.email_verified, users.created_at, sessions.expires_at
+                """SELECT users.id, users.username, users.email, users.region, users.bio,
+                  users.avatar, users.email_verified, users.created_at,
+                  users.steam_id, users.steam_name, users.steam_avatar, users.steam_synced_at,
+                  sessions.expires_at
            FROM sessions JOIN users ON users.id = sessions.user_id
            WHERE sessions.token = ?""",
         (_token_hash(token),),

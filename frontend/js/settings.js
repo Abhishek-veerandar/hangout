@@ -225,18 +225,65 @@ function setupPrivacyForm() {
 }
 
 /* ---------- Steam ---------- */
-
 function setupSteam() {
   const status = $("steam-status");
-  $("steam-name").textContent = MOCK_ACCOUNT.steamName;
-  $("steam-id").textContent = `Steam ID ${MOCK_ACCOUNT.steamId}`;
+  const sync = $("steam-sync");
+  const disconnect = $("steam-disconnect");
+  const connect = $("steam-connect");
 
-  $("steam-sync").addEventListener("click", () => {
-    status.textContent = "Syncing will work once the backend is connected.";
+  if (!account) {
+    // Demo mode: the mock Steam account
+    $("steam-name").textContent = MOCK_ACCOUNT.steamName;
+    $("steam-id").textContent = `Steam ID ${MOCK_ACCOUNT.steamId}`;
+    $("steam-synced").textContent = "Last synced 2h ago";
+    sync.addEventListener("click", () => { status.textContent = "Demo mode: no backend, so nothing was synced."; });
+    disconnect.addEventListener("click", () => { status.textContent = "Demo mode: no backend, so nothing changed."; });
+    return;
+  }
+
+  function show(steam) {
+    const linked = Boolean(steam);
+    $("steam-name").textContent = linked ? steam.name || "Steam account" : "Not connected";
+    $("steam-id").textContent = linked ? `Steam ID ${steam.id}` : "Connect Steam to match on your real games.";
+    $("steam-synced").textContent = linked && steam.syncedAt
+      ? `Last synced ${new Date(steam.syncedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}`
+      : "";
+    sync.hidden = !linked;
+    disconnect.hidden = !linked;
+    connect.hidden = linked;
+  }
+  show(account.steam);
+
+  sync.addEventListener("click", async () => {
+    sync.disabled = true;
+    status.textContent = "Syncing with Steam…";
+    try {
+      const result = await apiJSON("POST", "/api/steam/sync");
+      account.steam.syncedAt = new Date().toISOString();
+      show(account.steam);
+      status.textContent = result.private
+        ? "Your game details are private on Steam, so no games were imported."
+        : `Synced ${result.games} games (${Math.round(result.minutes / 60).toLocaleString("en-US")} hours).`;
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      sync.disabled = false;
+    }
   });
 
-  $("steam-disconnect").addEventListener("click", () => {
-    status.textContent = "Disconnecting removes your games from matching. This will work once the backend is connected.";
+  disconnect.addEventListener("click", async () => {
+    disconnect.disabled = true;
+    try {
+      await apiJSON("POST", "/api/steam/disconnect");
+      account.steam = null;
+      me.games = [];
+      show(null);
+      status.textContent = "Steam disconnected. Your games were removed from matching.";
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      disconnect.disabled = false;
+    }
   });
 }
 

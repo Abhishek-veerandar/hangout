@@ -1,6 +1,7 @@
+import secrets
 import sqlite3
 from pathlib import Path
-
+from dotenv import load_dotenv
 import numpy as np
 from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
@@ -15,6 +16,10 @@ from app.db import get_connection, init_db
 from app.recommender import load_model, player_features
 from app.friends import (accept_request, decline_request, find_user, friendship_status,
                          list_friends, list_requests, send_request, user_card)
+
+from app.steam import list_games, login_url, steam_info, sync_player, verify_login
+
+load_dotenv()   # reads STEAM_API_KEY from backend/.env
 
 # backend/app/main.py → up three levels is the repo root → frontend/
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
@@ -193,18 +198,24 @@ def current_user(hangout_session: str | None = Cookie(default=None)):
 
 @app.get("/api/me")
 def me(user=Depends(current_user)):
+    conn = get_connection()
+    try:
+        games = list_games(conn, user["id"])
+    finally:
+        conn.close()
     return {
         "id": user["id"], "username": user["username"], "email": user["email"],
         "region": user["region"], "bio": user["bio"], "avatar": user["avatar"],
         "emailVerified": bool(user["email_verified"]),
-        "joinedAt": user["created_at"][:10]
+        "joinedAt": user["created_at"][:10],
+        "steam": steam_info(user),
+        "games": games,
     }
 class ProfileUpdate(BaseModel):
     username: str
     bio: str = ""
     region: str = ""
     avatar: str | None = None
-
 
 @app.patch("/api/me")
 def update_me(body: ProfileUpdate, user=Depends(current_user)):
@@ -370,6 +381,99 @@ def decline_friend_request(from_id: int, user=Depends(current_user)):
         raise HTTPException(status_code=404, detail="That request doesn't exist anymore.")
     return {"ok": True}
 
+# ---------- Steam ----------
+
+STEAM_STATE_COOKIE = "steam_state"
+
+
+def steam_return_to(request, state):
+    return f"{request.base_url}api/steam/callback?state={state}"
+
+
+@app.get("/api/steam/login")
+def steam_login(request: Request, user=Depends(current_user)):
+    """The 'Sign in through Steam' button lands here; we send you on to Steam."""
+    state = secrets.token_urlsafe(16)
+    response = RedirectResponse(login_url(steam_return_to(request, state), str(request.base_url)))
+    # Remembered for 10 minutes so the callback knows the sign-in started here
+    response.set_cookie(STEAM_STATE_COOKIE, state, max_age=600, httponly=True, samesite="lax")
+    return response
+
+
+@app.get("/api/steam/callback")
+def steam_callback(request: Request, state: str = "",
+                   hangout_session: str | None = Cookie(default=None),
+                   steam_state: str | None = Cookie(default=None)):
+    """Steam sends you back here after you sign in on its website."""
+    def back(result):
+        response = RedirectResponse(f"/connect-steam.html?steam={result}")
+        response.delete_cookie(STEAM_STATE_COOKIE)
+        return response
+
+    conn = get_connection()
+    try:
+        user = user_for_session(conn, hangout_session)
+        if user is None:
+            return RedirectResponse("/auth.html")
+
+        # The state must match the cookie we set, so another site can't trick your
+        # browser into linking THEIR Steam account to YOUR Hangout account
+        if not state or not steam_state or not secrets.compare_digest(state, steam_state):
+            return back("invalid")
+
+        steam_id = verify_login(dict(request.query_params), steam_return_to(request, state))
+        if steam_id is None:
+            return back("invalid")
+
+        owner = conn.execute("SELECT id FROM users WHERE steam_id = ?", (steam_id,)).fetchone()
+        if owner and owner["id"] != user["id"]:
+            return back("taken")
+
+        conn.execute("UPDATE users SET steam_id = ? WHERE id = ?", (steam_id, user["id"]))
+        try:
+            result = sync_player(conn, user["id"], steam_id)
+        except Exception as error:    # Steam down, wrong API key, ...
+            print(f"Steam sync failed: {error}", flush=True)
+            conn.commit()             # keep the link; they can sync later
+            return back("error")
+        conn.commit()
+    finally:
+        conn.close()
+    return back("private" if result["private"] else "done")
+
+
+@app.post("/api/steam/sync")
+def steam_sync(user=Depends(current_user)):
+    if not user["steam_id"]:
+        raise HTTPException(status_code=400, detail="Connect your Steam account first.")
+    conn = get_connection()
+    try:
+        try:
+            result = sync_player(conn, user["id"], user["steam_id"])
+        except Exception as error:
+            print(f"Steam sync failed: {error}", flush=True)
+            raise HTTPException(status_code=502, detail="Couldn't reach Steam. Try again in a minute.")
+        conn.commit()
+    finally:
+        conn.close()
+    return result
+
+
+@app.post("/api/steam/disconnect")
+def steam_disconnect(user=Depends(current_user)):
+    conn = get_connection()
+    try:
+        conn.execute(
+            """UPDATE users SET steam_id = NULL, steam_name = NULL,
+                                steam_avatar = NULL, steam_synced_at = NULL WHERE id = ?""",
+            (user["id"],),
+        )
+        conn.execute("DELETE FROM user_games WHERE user_id = ?", (user["id"],))
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True}
+
 
 @app.get("/api/users/{username}")
 def public_profile(username: str, user=Depends(current_user)):
@@ -381,9 +485,10 @@ def public_profile(username: str, user=Depends(current_user)):
             raise HTTPException(status_code=404, detail="Player not found.")
         friends = list_friends(conn, other["id"])
         status = friendship_status(conn, user["id"], other["id"])
+        games = list_games(conn, other["id"])
     finally:
         conn.close()
-    return {**user_card(other), "friends": [user_card(row) for row in friends], "friendStatus": status}
+    return {**user_card(other), "friends": [user_card(row) for row in friends], "friendStatus": status, "games": games}
 
 @app.get("/api/verify-email")
 def verify_email(token: str = ""):

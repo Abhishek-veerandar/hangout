@@ -243,3 +243,8 @@
   .summary { grid-template-columns: minmax(0, 1fr); }
   .setup-step { padding: 8px 10px; font-size: 12px; }
 }
+
+.connect-note.is-error {
+  color: var(--danger);
+  font-weight: 700;
+}
