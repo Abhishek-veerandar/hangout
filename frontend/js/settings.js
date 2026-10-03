@@ -157,7 +157,7 @@ function setupPasswordForm() {
   const next = $("set-new");
   const confirm = $("set-confirm");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     setFormStatus(form, "");
 
@@ -178,8 +178,31 @@ function setupPasswordForm() {
       return;
     }
 
-    form.reset(); // never leave passwords sitting in the page
-    setFormStatus(form, "Changing your password will work once the backend is connected.");
+    if (!account) {
+      form.reset();
+      setFormStatus(form, "Demo mode: no backend, so nothing was changed.");
+      return;
+    }
+
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    try {
+      await apiJSON("POST", "/api/me/password", {
+        current_password: current.value,
+        new_password: next.value,
+      });
+      form.reset(); // never leave passwords sitting in the page
+      setFormStatus(form, "Password changed. Your other devices were logged out.");
+    } catch (error) {
+      if (error.message.includes("current password")) {
+        setError(current, error.message);
+        current.focus();
+      } else {
+        setFormStatus(form, error.message);
+      }
+    } finally {
+      submit.disabled = false;
+    }
   });
 }
 
@@ -222,19 +245,43 @@ function setupSteam() {
 function setupDelete() {
   const form = $("delete-form");
   const input = $("delete-confirm");
+  const password = $("delete-password");
   const button = $("delete-btn");
 
   $("delete-username").textContent = me.username;
 
-  // The button only unlocks when the username is typed exactly
-  input.addEventListener("input", () => {
-    button.disabled = input.value !== me.username;
-  });
+  // Unlocks only when the username is typed exactly AND a password is entered
+  function update() {
+    button.disabled = input.value !== me.username || password.value === "";
+  }
+  input.addEventListener("input", update);
+  password.addEventListener("input", update);
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (input.value !== me.username) return;
-    setFormStatus(form, "Account deletion will work once the backend is connected. Nothing was deleted.");
+    if (button.disabled) return;
+
+    if (!account) {
+      setFormStatus(form, "Demo mode: no backend, so nothing was deleted.");
+      return;
+    }
+
+    button.disabled = true;
+    try {
+      await apiJSON("POST", "/api/me/delete", { password: password.value });
+      try {
+        localStorage.removeItem("hangout-avatar");
+        localStorage.removeItem("hangout-arcade-best");
+      } catch {
+        // storage blocked: nothing to clean up
+      }
+      location.href = "index.html";
+    } catch (error) {
+      setError(password, error.message);   // "Wrong password."
+      password.value = "";
+      password.focus();
+      update();
+    }
   });
 }
 
@@ -244,6 +291,7 @@ function setupDelete() {
 
 loadAccount().then((result) => {
   account = result;
+  if (account) MOCK_ACCOUNT.email = account.email;
   fillAvatar($("nav-avatar"), me);
   setupAccountMenu();
   setupProfileForm();

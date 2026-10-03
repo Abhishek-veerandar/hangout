@@ -7,8 +7,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.auth import (SESSION_DAYS, create_email_token, create_session, delete_session,
-                      hash_password, send_verification_email, signup_error, use_email_token,
+from app.auth import (SESSION_DAYS, create_email_token, create_session, delete_other_sessions,
+                      delete_session, hash_password, password_error, profile_error,
+                      send_verification_email, signup_error, use_email_token,
                       user_for_session, verify_password)
 from app.db import get_connection, init_db
 from app.recommender import load_model, player_features
@@ -194,6 +195,7 @@ def me(user=Depends(current_user)):
         "id": user["id"], "username": user["username"], "email": user["email"],
         "region": user["region"], "bio": user["bio"], "avatar": user["avatar"],
         "emailVerified": bool(user["email_verified"]),
+        "joinedAt": user["created_at"][:10]
     }
 class ProfileUpdate(BaseModel):
     username: str
@@ -238,6 +240,54 @@ def logout(response: Response, hangout_session: str | None = Cookie(default=None
             conn.commit()
         finally:
             conn.close()
+    response.delete_cookie(SESSION_COOKIE)
+    return {"ok": True}
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+
+@app.post("/api/me/password")
+def change_password(body: PasswordChange, user=Depends(current_user),
+                    hangout_session: str | None = Cookie(default=None)):
+    error = password_error(body.new_password)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+
+    conn = get_connection()
+    try:
+        row = conn.execute("SELECT password_hash FROM users WHERE id = ?", (user["id"],)).fetchone()
+        # 400, not 401: a 401 would make the page think you're logged out
+        if not verify_password(body.current_password, row["password_hash"]):
+            raise HTTPException(status_code=400, detail="Your current password is wrong.")
+        conn.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (hash_password(body.new_password), user["id"]),
+        )
+        delete_other_sessions(conn, user["id"], hangout_session)
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True}
+
+
+class DeleteAccount(BaseModel):
+    password: str
+
+
+@app.post("/api/me/delete")
+def delete_account(body: DeleteAccount, response: Response, user=Depends(current_user)):
+    conn = get_connection()
+    try:
+        row = conn.execute("SELECT password_hash FROM users WHERE id = ?", (user["id"],)).fetchone()
+        if not verify_password(body.password, row["password_hash"]):
+            raise HTTPException(status_code=400, detail="Wrong password.")
+        # ON DELETE CASCADE removes their sessions and email tokens too
+        conn.execute("DELETE FROM users WHERE id = ?", (user["id"],))
+        conn.commit()
+    finally:
+        conn.close()
     response.delete_cookie(SESSION_COOKIE)
     return {"ok": True}
 

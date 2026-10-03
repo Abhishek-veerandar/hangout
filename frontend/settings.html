@@ -218,6 +218,12 @@
                   confirm</label>
                 <input class="field__input" id="delete-confirm" type="text" autocomplete="off" spellcheck="false">
               </div>
+              <div class="field">
+                <label class="field__label" for="delete-password">Your password</label>
+                <input class="field__input" id="delete-password" type="password" autocomplete="current-password"
+                  aria-describedby="delete-password-error">
+                <p class="field__error" id="delete-password-error"></p>
+              </div>
               <div class="panel__actions">
                 <button type="submit" class="btn btn--danger btn--sm" id="delete-btn" disabled>Delete my
                   account</button>
@@ -232,12 +238,12 @@
 
   </div>
   <template id="char-option-template">
-  <label class="char-option">
-    <input type="radio" name="avatar" class="visually-hidden">
-    <span class="char-option__sprite" aria-hidden="true"></span>
-    <span class="char-option__name"></span>
-  </label>
-</template>
+    <label class="char-option">
+      <input type="radio" name="avatar" class="visually-hidden">
+      <span class="char-option__sprite" aria-hidden="true"></span>
+      <span class="char-option__name"></span>
+    </label>
+  </template>
 
 </body>
 

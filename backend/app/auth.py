@@ -94,7 +94,7 @@ def user_for_session(conn, token):
         return None
     row = conn.execute(
         """SELECT users.id, users.username, users.email, users.region, users.bio,
-                  users.avatar, users.email_verified, sessions.expires_at
+                  users.avatar, users.email_verified, users.created_at, sessions.expires_at
            FROM sessions JOIN users ON users.id = sessions.user_id
            WHERE sessions.token = ?""",
         (_token_hash(token),),
@@ -110,6 +110,21 @@ def user_for_session(conn, token):
 def delete_session(conn, token):
     conn.execute("DELETE FROM sessions WHERE token = ?", (_token_hash(token),))
 
+def password_error(password):
+    """The same length rules as signup."""
+    if len(password) < 8:
+        return "Password must be at least 8 characters."
+    if len(password) > 128:
+        return "Password must be at most 128 characters."
+    return None
+
+
+def delete_other_sessions(conn, user_id, keep_token):
+    """Logs out every other device, but keeps this browser logged in."""
+    conn.execute(
+        "DELETE FROM sessions WHERE user_id = ? AND token != ?",
+        (user_id, _token_hash(keep_token or "")),
+    )
 
 # ---------- Email verification ----------
 

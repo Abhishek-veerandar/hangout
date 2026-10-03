@@ -126,11 +126,23 @@ async function loadAccount() {
 
   const account = await response.json();
   const me = MOCK_USERS.find((user) => user.id === CURRENT_USER_ID);
-  if (me) {
+    if (me) {
+    // A real account starts fresh: nothing of pixel_ronin's carries over
     me.username = account.username;
-    me.region = account.region;
-    me.bio = account.bio;
-    if (account.avatar) me.avatar = account.avatar;
+    me.region = account.region || "";
+    me.bio = account.bio || "";
+    me.avatar = account.avatar || null;
+    me.avatarUrl = null;
+    me.joinedAt = account.joinedAt;
+    me.games = [];        // filled in once Steam is connected for real
+    me.friendIds = [];    // filled in once friends are saved in the backend
+    me.screenshots = [];
+    me.steam = { state: "offline", game: null };
+
+    // The mock players had pixel_ronin as a friend. You aren't him, so remove that.
+    MOCK_USERS.forEach((user) => {
+      if (user !== me) user.friendIds = user.friendIds.filter((id) => id !== me.id);
+    });
   }
   showEmailBanner(account);
   return account;
